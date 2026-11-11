@@ -11,10 +11,12 @@ Future<ProcessResult> _inspect({
   required File sample,
   required Map<String, String> environment,
 }) {
-  return Process.run(python, [
-    'tool/inspect_story15.py',
-    sample.path,
-  ], environment: environment);
+  return Process.run(
+    python,
+    ['tool/inspect_story15.py', sample.path],
+    environment: environment,
+    includeParentEnvironment: false,
+  );
 }
 
 void main() {
