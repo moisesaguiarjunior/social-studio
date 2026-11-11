@@ -93,4 +93,4 @@ The first consumers are mobile apps built with Flutter, where the content is per
 
 ## Contributing
 
-Issues and pull requests are welcome once phase 0 is published. Read [AGENTS.md](AGENTS.md): the same rules apply to human and AI contributors. By contributing you agree that your contributions are licensed under the [Apache License 2.0](LICENSE).
+Issues and pull requests are welcome once phase 0 is published. Read [CONTRIBUTING.md](CONTRIBUTING.md): the code standards, local review hooks and independent review apply to human and AI contributors alike. By contributing you agree that your contributions are licensed under the [Apache License 2.0](LICENSE).

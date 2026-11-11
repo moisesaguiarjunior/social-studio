@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Local review gate for every commit: format, analysis and tests for each
+# Dart/Flutter package affected by the staged changes (including deletions),
+# run on a snapshot of the index, not on the working tree.
+set -euo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+source tool/hooks/lib.sh
+
+changed="$(git diff --cached --name-only --no-renames)"
+[ -z "$changed" ] && exit 0
+
+snapshot="$(mktemp -d)"
+trap 'rm -rf "$snapshot"' EXIT
+git checkout-index --all --prefix="$snapshot/"
+
+packages="$(
+  while IFS= read -r path; do
+    package_of "$snapshot" "$path"
+  done <<<"$changed" | sort -u
+)"
+[ -z "$packages" ] && exit 0
+
+while IFS= read -r pkg; do
+  echo "pre-commit: checking $pkg (staged content)"
+  check_package "$snapshot/$pkg"
+done <<<"$packages"
