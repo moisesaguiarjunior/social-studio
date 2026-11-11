@@ -8,6 +8,8 @@ A number below is a requirement only when the cited page states it. "Recommended
 
 Page "last updated" dates are the dates those sites show. The check date for every page is 2026-11-11.
 
+The README target table names Instagram, TikTok, and YouTube. The X section below is the same kind of file record, for a later profile. It is not a phase 1 gate, and it does not change the README.
+
 ## Two Instagram paths
 
 Instagram publishes two different file stories. They are not interchangeable.
@@ -309,6 +311,78 @@ Direct Post is `POST /v2/post/publish/video/init/`, scope `video.publish`. It re
 
 Creator duration comes from `POST /v2/post/publish/creator_info/query/`, field `max_video_post_duration_sec`. Source: [Query Creator Info](https://developers.tiktok.com/doc/content-posting-api-reference-query-creator-info), checked 2026-11-11.
 
+## X
+
+X is not in the README target table. Nothing in this section is a phase 1 gate.
+
+The help center and the developer media docs, both read on 2026-11-11, do not agree on duration or file size. Both are recorded. This document does not pick one.
+
+### In-app and web upload
+
+The person posts. Sources, checked 2026-11-11, no updated date in the article body:
+
+- [How to share and watch videos on X](https://help.x.com/en/using-x/x-videos)
+- [Longer videos for X Premium subscribers](https://help.x.com/en/using-x/premium-longer-videos)
+
+| Field | Published value |
+| --- | --- |
+| Container, video codec, profile, pixel format, color tags, frame rate, audio | **not published** on these articles. The longer-video article says longer uploads follow the video formats X currently supports, and points at the video article. That article does not list them |
+| Resolution | Premium, on x.com and X for iOS: up to 4 hours at 1080p. Videos above 2 hours and under 4 hours must be 720p. Non-subscriber resolution: **not published** here. The video article has a question about resolution and aspect-ratio limits. The answer is not in the article body retrieved |
+| Aspect ratio | **not published** in the article body retrieved |
+| Minimum duration | **not published** |
+| Maximum duration | Without Premium: 140 seconds, on any platform. With Premium: up to 4 hours on x.com and X for iOS, and up to 10 minutes on Android |
+| Maximum file size | Web upload, without a subscription: 512 MB. Web upload, subscribed (Premium, or Plus, Premium, Super, or Ultra on The X Subscription): 16 GB. Videos shorter than 4 hours at 1080p should not exceed 16 GB. Videos above 2 hours and under 4 hours should not exceed 16 GB |
+| Cover or thumbnail | **not published** |
+| UI safe zone | **not published** |
+
+Ways to share a video, from the video article: record in the X app, import on X for iPhone or iPad, upload on x.com, or go live. The compose steps describe choosing a video from the gallery. A dedicated Android or iOS share-intent file table, of the Instagram Stories kind, is **not published** on these pages.
+
+[Web intents](https://docs.x.com/x-for-websites/web-intents/overview) open a composer with `https://x.com/intent/tweet`. The documented parameters are text and a URL. They do not attach a local video file.
+
+### Media upload API
+
+Sources, checked 2026-11-11. The markdown pages do not show an updated date:
+
+- [Media upload endpoints](https://docs.x.com/x-api/media/introduction.md)
+- [Best practices](https://docs.x.com/x-api/media/quickstart/best-practices.md)
+
+This API attaches media with `POST /2/tweets`. That posts for the user. It is outside the README non-goal of posting automatically. The file rules are still the published codec record.
+
+Limits follow the authenticated user's X Premium or verified status, not the developer API plan. Upload and posting are checked separately. A file can finish upload and still be rejected when it is attached to a Post.
+
+A Post may include up to 4 photos, 1 animated GIF, or 1 video.
+
+| Account | `media_category` | Duration | Maximum file size |
+| --- | --- | --- | --- |
+| Default, no Premium | `tweet_video`, `amplify_video` | 0.5 seconds to 20 minutes | 8 GB |
+| X Premium or verified | `tweet_video`, `amplify_video` | 0.5 seconds to 125 minutes | 16 GB |
+| Default, no Premium | `dm_video` | 0.5 seconds to 140 seconds | 512 MB |
+| X Premium or verified | `dm_video` | 0.5 seconds to 10 minutes | 1 GB |
+
+The introduction page says these Post-video caps match the X app. The help center, above, says 140 seconds and 512 MB without Premium, and up to 4 hours with Premium on x.com and iOS. Those are different numbers.
+
+Video file rules from Best practices:
+
+| Field | Published value |
+| --- | --- |
+| Container | **not published** as a container name. Chunked-upload examples use `media_type` `video/mp4` |
+| Video codec | Recommended: H264 High Profile. A required profile: **not published** |
+| Pixel format | Only YUV 4:2:0 |
+| Color tags | **not published** |
+| Frame rate | Must be 60 FPS or less. Recommended: 30 FPS and 60 FPS |
+| Resolution | Must be between 32×32 and 1280×1024. The same page recommends 1280×720, 720×1280, and 720×720, and says subscribed users can upload a 1080p video and get 1080p playback, while unsubscribed users can upload a 720p video and get 720p playback. 720×1280 and 1080p sit outside 1280×1024. Both sentences are on the page |
+| Aspect ratio | Must be between 1:3 and 3:1. Pixel aspect ratio must be 1:1. Recommended: 16:9 (landscape or portrait) or 1:1 |
+| Audio codec | Must be AAC Low Complexity. High-Efficiency AAC is not supported. Recommended minimum audio bitrate: 128 kbps |
+| Audio sample rate | **not published** |
+| Audio channels | Mono or stereo. Not 5.1 or greater |
+| Other video constraints | Must not have an open GOP. Must use progressive scan. Recommended minimum video bitrate: 5,000 kbps |
+| Cover or thumbnail | **not published** as an upload field on these pages |
+| UI safe zone | **not published** |
+
+The same page has a second bitrate table and says each row is a recommendation, not a requirement. Portrait 720×1280 is listed there at 2048 kbps video and 128 kbps audio.
+
+Images, same pages: JPG, PNG, GIF, or WEBP, 5 MB maximum (`tweet_image`, `dm_image`). Animated GIF: 15 MB maximum. GIF recommendations: resolution at most 1280×1080, at most 350 frames, at most 300 million pixels (`width * height * num_frames`). Image width and height limits, other than the GIF recommendation: **not published**.
+
 ## YouTube
 
 YouTube's encoding page is recommendations, not a list of reject limits. Its first line is: "These features are only available to partners who use YouTube Studio Content Manager." The settings below are still what that page recommends. Checked 2026-11-11. The help pages do not show an updated date.
@@ -407,7 +481,7 @@ To keep a video from being categorized as a Short, the three-minute Shorts page 
 
 ## UI safe zones
 
-Numeric insets (pixels or percentages of the frame, other than the ads disclaimer note below) for organic Stories, Reels, feed, TikTok, and YouTube: **not published** on the pages checked on 2026-11-11.
+Numeric insets (pixels or percentages of the frame, other than the ads disclaimer note below) for organic Stories, Reels, feed, TikTok, X, and YouTube: **not published** on the pages checked on 2026-11-11.
 
 Meta's business help page is about **ads**, and it does not publish a pixel inset for the general case:
 
@@ -441,6 +515,11 @@ Phase 1 has no published numeric safe-zone inset to meet.
 | [TikTok Upload](https://developers.tiktok.com/doc/content-posting-api-reference-upload-video) | 2026-08-04 | Inbox hand-off and MIME types |
 | [TikTok Direct Post](https://developers.tiktok.com/doc/content-posting-api-reference-direct-post) | 2026-10-27 | Cover timestamp and the posting endpoint |
 | [TikTok Query Creator Info](https://developers.tiktok.com/doc/content-posting-api-reference-query-creator-info) | 2026-10-27 | Per-account maximum duration |
+| [X videos help](https://help.x.com/en/using-x/x-videos) | not shown | In-app and web upload duration and size |
+| [X Premium longer videos](https://help.x.com/en/using-x/premium-longer-videos) | not shown | Premium duration, including the Android 10-minute line |
+| [X media upload](https://docs.x.com/x-api/media/introduction.md) | not shown | API duration and file size by account |
+| [X media best practices](https://docs.x.com/x-api/media/quickstart/best-practices.md) | not shown | Codec, pixel format, frame rate, aspect ratio |
+| [X web intents](https://docs.x.com/x-for-websites/web-intents/overview) | not shown | Composer URL. No local video attachment |
 | [YouTube recommended upload encoding](https://support.google.com/youtube/answer/1722171?hl=en) | not shown | Encoding recommendations |
 | [YouTube uploads longer than 15 minutes](https://support.google.com/youtube/answer/71673?hl=en) | not shown | Duration and file size |
 | [Three-minute YouTube Shorts](https://support.google.com/youtube/answer/15424877?hl=en) | not shown | Shorts duration and categorization |
