@@ -1,6 +1,8 @@
 # Working in this repository
 
-Everything here is in English: code, docs, commits. Read [README.md](README.md) first; it defines goals, non-goals and phases.
+Everything here is in English: code, docs, commits. Read [README.md](README.md) for goals, non-goals and phases, and [CONTRIBUTING.md](CONTRIBUTING.md) for the code standards, which are binding.
+
+This is a public repository: the bar is state-of-the-art, clean code. Everything pushed is public, including branches: **never push before an independent local review**. `main` is protected; changes enter through pull requests. Run `tool/install-hooks.sh` once; never bypass the hooks.
 
 ## Before writing code
 
