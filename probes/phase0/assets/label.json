@@ -1,0 +1,87 @@
+{
+  "v": "5.7.0",
+  "fr": 30,
+  "ip": 0,
+  "op": 30,
+  "w": 400,
+  "h": 200,
+  "nm": "label",
+  "ddd": 0,
+  "assets": [
+    {
+      "id": "img_0",
+      "w": 8,
+      "h": 8,
+      "u": "",
+      "p": "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAEklEQVR4nGMQVDL+jw8zjAwFAK1LWUGzu2YcAAAAAElFTkSuQmCC",
+      "e": 1
+    }
+  ],
+  "fonts": {
+    "list": [
+      {"fName": "Roboto", "fFamily": "Roboto", "fStyle": "Regular", "ascent": 75}
+    ]
+  },
+  "layers": [
+    {
+      "ddd": 0,
+      "ind": 1,
+      "ty": 5,
+      "nm": "words",
+      "sr": 1,
+      "ks": {
+        "o": {"a": 0, "k": 100},
+        "r": {"a": 0, "k": 0},
+        "p": {"a": 0, "k": [200, 80, 0]},
+        "a": {"a": 0, "k": [0, 0, 0]},
+        "s": {"a": 0, "k": [100, 100, 100]}
+      },
+      "ao": 0,
+      "t": {
+        "d": {
+          "k": [
+            {
+              "s": {
+                "s": 42,
+                "f": "Roboto",
+                "t": "BEFORE",
+                "j": 2,
+                "tr": 0,
+                "lh": 50,
+                "ls": 0,
+                "fc": [1, 1, 1]
+              },
+              "t": 0
+            }
+          ]
+        },
+        "p": {},
+        "m": {"g": 1, "a": {"a": 0, "k": [0, 0]}}
+      },
+      "ip": 0,
+      "op": 30,
+      "st": 0,
+      "bm": 0
+    },
+    {
+      "ddd": 0,
+      "ind": 2,
+      "ty": 2,
+      "nm": "swatch",
+      "refId": "img_0",
+      "sr": 1,
+      "ks": {
+        "o": {"a": 0, "k": 100},
+        "r": {"a": 0, "k": 0},
+        "p": {"a": 0, "k": [40, 160, 0]},
+        "a": {"a": 0, "k": [0, 0, 0]},
+        "s": {"a": 0, "k": [400, 400, 100]}
+      },
+      "ao": 0,
+      "ip": 0,
+      "op": 30,
+      "st": 0,
+      "bm": 0
+    }
+  ]
+}

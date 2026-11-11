@@ -1,0 +1,31 @@
+name: phase0_probe
+description: >-
+  Synthetic probes for the Social Studio phase 0 evaluation.
+  Not published. No real photos, voices, or transcripts.
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fluvie: 0.3.1
+  lottie: 3.8.2
+
+dev_dependencies:
+  # The fluvie_cli harness imports this so flutter test can load real fonts.
+  alchemist: 0.14.1
+  crypto: 3.0.8
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/Roboto-Regular.ttf
+    - assets/moving_box.json
+    - assets/label.json
