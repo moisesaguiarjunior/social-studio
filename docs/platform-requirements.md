@@ -8,7 +8,7 @@ A number below is a requirement only when the cited page states it. "Recommended
 
 Page "last updated" dates are the dates those sites show. The check date for every page is 2026-11-11.
 
-The README target table names Instagram, TikTok, and YouTube. The X section below is the same kind of file record, for a later profile. It is not a phase 1 gate, and it does not change the README.
+The README target table names Instagram, TikTok, and YouTube. The X and WhatsApp sections below are the same kind of file record, for a later profile. They are not a phase 1 gate, and they do not change the README. Other networks are not recorded here.
 
 ## Two Instagram paths
 
@@ -383,6 +383,137 @@ The same page has a second bitrate table and says each row is a recommendation, 
 
 Images, same pages: JPG, PNG, GIF, or WEBP, 5 MB maximum (`tweet_image`, `dm_image`). Animated GIF: 15 MB maximum. GIF recommendations: resolution at most 1280×1080, at most 350 frames, at most 300 million pixels (`width * height * num_frames`). Image width and height limits, other than the GIF recommendation: **not published**.
 
+## WhatsApp
+
+WhatsApp is not in the README target table. Nothing in this section is a phase 1 gate.
+
+Status has two file stories. The in-app upload pages and Share to Status do not agree on duration or container. Both are recorded. This document does not pick one.
+
+A chat send, and a WhatsApp Business Cloud API message, are other surfaces. Their numbers are below so they are not copied onto a status file.
+
+### In-app Status
+
+The person picks a photo or video inside WhatsApp and publishes. Sources, checked 2026-11-11. The help pages do not show an updated date in the article body:
+
+- [About status](https://faq.whatsapp.com/454876960047011)
+- [How to create and share a status](https://faq.whatsapp.com/643144237275579)
+- [Can't create or share status](https://faq.whatsapp.com/896930805262380)
+- [About HD photos and videos](https://faq.whatsapp.com/759301289012856)
+- [How to edit, save and delete your status](https://faq.whatsapp.com/8560797347309938)
+- [About adding music to WhatsApp Status](https://faq.whatsapp.com/2328947994154988)
+
+| Field | Published value |
+| --- | --- |
+| What disappears after 24 hours | Text, photo, video, and GIF. The edit page says status updates are available online for 24 hours |
+| Video container | About status: 3GP and mpeg4. Create and share, on the Android, iOS, and web tabs: 3GP and MPEG-4. Troubleshooting: 3GP or MP4 |
+| Video codec, profile, pixel format, color tags, frame rate, audio | **not published** on these pages |
+| Minimum duration | **not published** |
+| Maximum duration | About status: 90 seconds. Troubleshooting: 90 seconds, and a longer video shares only the first 90. Create and share, Android and iOS tabs: videos can be up to 90 seconds. That 90-second sentence is not in the web tab's video note. The music page, Android and iOS tabs: video updates can be a maximum of 90 seconds |
+| File size | **not published**. Sharing a status needs at least 1 GB of free space on the device. Viewing statuses needs at least 1 GB of storage available on the device. Those lines are about space on the device |
+| Resolution, aspect ratio, image format, image dimensions | **not published** on these pages |
+| Layout | Android tab of create and share: a layout status combines 2–6 photos. Dimensions and file size for that layout: **not published**. The iOS and web tabs retrieved do not describe a layout status |
+| HD | HD media is not supported for statuses. The HD page says HD media is not currently available for status updates or profile pictures |
+| Quality | The quality of images, GIFs, videos, and pictures uploaded to Status may be lower than the original. The troubleshooting page says these files are usually compressed |
+| GIF and voice | GIF is named as a status type. The iOS tab of create and share describes recording a voice status in the app. A file size, duration, or format for a GIF or a voice status: **not published** |
+| Music | Chosen in the composer from licensed music provided by Meta. It is not a file field on the upload. An image update can include up to 15 seconds of that music. On a video, the music can last the duration of the video. Music cannot be added to text, GIF, or voice statuses. The Web tab says music on Status is currently not supported on WhatsApp Web. The phone tabs say to add it on an iOS or Android device |
+| Cover or thumbnail | **not published** |
+| UI safe zone | **not published** |
+
+The web tab of create and share uses Photos & videos. The Android and iOS video steps are on the same article. The share-intent file table is on the Share to Status page, not on these pages.
+
+### Share to Status
+
+The app passes a local file. WhatsApp loads it in the status composer. The person can edit it and publish it like a regular status. This hand-off does not post by itself.
+
+Source, checked 2026-11-11, no updated date in the article body: [How to integrate status with third-party apps](https://faq.whatsapp.com/669870872481343). Android and iOS are tabs of that article. The file tables differ.
+
+Android uses an implicit `ACTION_VIEW` intent. The data URI is `https://wa.me/status`. The sample sets the package to `com.whatsapp`. Required extras are `source_app_package_name` and `share_type` with the value `SHARE_TO_STATUS`. Background media is `android.intent.extra.STREAM`. Foreground media is `foreground_media`. Optional colors are `background_color`, `color_gradient_top`, and `color_gradient_bottom`. The page says the URI must be granted `FLAG_GRANT_READ_URI_PERMISSION`.
+
+| Field | Android published value |
+| --- | --- |
+| Background image | JPG, PNG. Recommended minimum dimensions: 720px × 1280px |
+| Background video | MOV, MP4, WebM. Supported resolutions: 720p, 1080p. The page does not define the pixel size of 720p or 1080p. Duration: up to 60 seconds. Recommended aspect ratio: 9:16 |
+| Video file size, codec, profile, pixel format, color tags, frame rate, audio | **not published** on the Android table |
+| Foreground | JPG, PNG. An image only. Dimensions: **not published** |
+| What must be sent | A background asset, a foreground asset, or both |
+| Color versus asset | If a color and a background asset are both set, the asset takes precedence. If a gradient and a color are both set, the gradient takes precedence. If a gradient and a background asset are both set, the asset takes precedence |
+| UI safe zone | **not published** |
+
+The foreground sample says that if the background colors are omitted, the background color defaults to the most dominant color. The iOS sample says the same.
+
+iOS checks WhatsApp with the `whatsapp` scheme. `LSApplicationQueriesSchemes` includes `whatsapp`. The page says to use that scheme to check that WhatsApp is installed, and to use `https://wa.me/media-share-external` for the share. The pasteboard type is `com.whatsapp.media-share-external.data`. `bundle_id` is required.
+
+| Field | iOS published value |
+| --- | --- |
+| Background image | JPG, PNG. Minimum dimensions: 720×1280. Recommended ratios: 9:16, 9:18 |
+| Background video | MOV, MP4, WebM. Supported resolutions: up to 1080p. Duration: up to 60 seconds. Recommended aspect ratio: 9:16. Recommended file size: under 64 MB. The page says this might get transcoded to 16 MB in some cases |
+| `background_media_type` | JPG, PNG, MOV, MP4, WebM |
+| Video codec, profile, pixel format, color tags, frame rate, audio | **not published** |
+| Foreground | JPG, PNG. An image only. `foreground_media_type`: JPG, PNG. Dimensions: **not published** |
+| Colors | `background_color` is four numbers, red, green, blue, and alpha, each from 0 to 1. `background_gradient` uses the first two colors, top then bottom. The asset takes precedence over a gradient or a color. A gradient takes precedence over a color |
+| UI safe zone | **not published** |
+
+The iOS sample sets the pasteboard item to expire after 2 minutes. That is the sample's pasteboard lifetime, not a status duration.
+
+### Where the Status paths disagree
+
+| Topic | In-app Status | Share to Status |
+| --- | --- | --- |
+| Maximum duration | 90 seconds on the pages that state it. A longer video shares its first 90. The web tab of create and share does not repeat that sentence | Up to 60 seconds |
+| Container | 3GP and mpeg4, MPEG-4, or MP4, depending on the page. MOV and WebM are not in these lists | MOV, MP4, WebM. 3GP is not in this list |
+| File size | **not published** | Android: **not published**. iOS: under 64 MB recommended. The page says it might be transcoded to 16 MB in some cases |
+| Resolution | **not published** | Android: 720p and 1080p. iOS: up to 1080p |
+| Image size | **not published** | Android: recommended minimum 720px × 1280px. iOS: minimum 720×1280. Recommended ratios 9:16 and 9:18 |
+
+The hand-off is the path that matches giving the app a local file and letting the person publish. It does not settle the 90-second in-app rule. Neither column is a phase 1 gate.
+
+### Status ads
+
+Ads only. Source, checked 2026-11-11, no updated date shown: [Troubleshoot image quality in status ads](https://faq.whatsapp.com/550664524802386).
+
+That page says WhatsApp Status supports a 9:16 ratio for both images and videos, and that the minimum recommended image resolution for WhatsApp Status is 500 × 320 pixels. It also says to use the highest resolution image possible. Those sentences are in an ads article. They are not copied into the organic Status tables above. The page does not publish a numeric safe-zone inset.
+
+### Chat, in the app
+
+The person sends a file in a chat. This is not a status.
+
+Source, checked 2026-11-11, no updated date shown: [How to send media, contacts, or location](https://faq.whatsapp.com/453914586839706).
+
+The steps open an individual or group chat. The same note repeats two Status lines already recorded above: status videos have a maximum duration of 90 seconds, and HD media is not currently available for status updates or profile pictures. The page does not say the size and format lines below apply to Status.
+
+| Field | Published value |
+| --- | --- |
+| Default video size | Faster internet connection: 100 MB and 720p. Slower internet connection: 64 MB and 480p |
+| Documents | 2 GB maximum |
+| Video formats | 3GP, AVI, FLV, MKV, MOV, MP4 |
+| Audio | A high audio sample rate, or professional cameras, may be unsupported. Codec, sample rate, and channel count: **not published** |
+| How many | The web steps say up to 100 photos or videos at once |
+| HD | Standard quality or HD quality, for media in a chat |
+| Codec, frame rate, color tags, aspect ratio | **not published** |
+
+### Business Cloud API messages
+
+This sends a message to a WhatsApp user. It is not Status. The business sends it. It is outside the hand-off.
+
+Sources, checked 2026-11-11:
+
+- [Media](https://developers.facebook.com/documentation/business-messaging/whatsapp/business-phone-numbers/media/), updated 2026-10-30
+- [Video messages](https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/video-messages/), updated 2026-11-04
+
+Upload is `POST /<PHONE_NUMBER_ID>/media`. A video message is `POST /<WHATSAPP_BUSINESS_PHONE_NUMBER_ID>/messages`.
+
+| Field | Published value |
+| --- | --- |
+| Video | Only H.264 video and AAC audio. One audio stream, or none. 3GPP (`.3gp`, `video/3gpp`) or MP4 (`.mp4`, `video/mp4`). Maximum size 16 MB |
+| Profile and file layout | Videos encoded with the H.264 High profile and B-frames are not supported by Android WhatsApp clients. The page recommends the H.264 Main profile without B-frames, or the H.264 Baseline profile. It recommends placing moov boxes before mdat boxes |
+| Duration, frame rate, resolution, aspect ratio, pixel format, color tags | **not published** on these pages |
+| Image | 8-bit, RGB or RGBA. JPEG (`.jpeg`, `image/jpeg`) 5 MB. PNG (`.png`, `image/png`) 5 MB. Static WebP (`.webp`, `image/webp`) 5 MB. A static WebP sent as an image message is transcoded to JPEG. Animated WebP, a file that cannot be decoded as WebP, and an image over 4,096 pixels on an edge are rejected |
+| Inbound media message | Maximum 100 MB. A larger file from the customer arrives as webhook error 131052. That cap is for a media message the business receives |
+
+The same media page lists audio, document, and sticker limits. They are not copied here.
+
+The On-Premises API media reference now opens the [sunset page](https://developers.facebook.com/docs/whatsapp/on-premises/sunset). That page says the final supported On-Premises client expired on 2025-10-23, and that On-Premises API can no longer send messages to WhatsApp users. Its older size table is not copied here. Checked 2026-11-11. The sunset page does not show an updated date in the text retrieved.
+
 ## YouTube
 
 YouTube's encoding page is recommendations, not a list of reject limits. Its first line is: "These features are only available to partners who use YouTube Studio Content Manager." The settings below are still what that page recommends. Checked 2026-11-11. The help pages do not show an updated date.
@@ -481,7 +612,7 @@ To keep a video from being categorized as a Short, the three-minute Shorts page 
 
 ## UI safe zones
 
-Numeric insets (pixels or percentages of the frame, other than the ads disclaimer note below) for organic Stories, Reels, feed, TikTok, X, and YouTube: **not published** on the pages checked on 2026-11-11.
+Numeric insets (pixels or percentages of the frame, other than the ads disclaimer note below) for organic Stories, Reels, feed, TikTok, X, YouTube, and WhatsApp: **not published** on the pages checked on 2026-11-11. The WhatsApp status-ads page is ads guidance and is recorded in the WhatsApp section. It does not publish a numeric inset.
 
 Meta's business help page is about **ads**, and it does not publish a pixel inset for the general case:
 
@@ -520,6 +651,18 @@ Phase 1 has no published numeric safe-zone inset to meet.
 | [X media upload](https://docs.x.com/x-api/media/introduction.md) | not shown | API duration and file size by account |
 | [X media best practices](https://docs.x.com/x-api/media/quickstart/best-practices.md) | not shown | Codec, pixel format, frame rate, aspect ratio |
 | [X web intents](https://docs.x.com/x-for-websites/web-intents/overview) | not shown | Composer URL. No local video attachment |
+| [WhatsApp About status](https://faq.whatsapp.com/454876960047011) | not shown | In-app Status duration, 3GP and mpeg4, 24 hours |
+| [WhatsApp create and share a status](https://faq.whatsapp.com/643144237275579) | not shown | Android and iOS: up to 90 seconds, 3GP and MPEG-4. Android layout: 2–6 photos. Web tab omits the 90-second line |
+| [WhatsApp can't create or share status](https://faq.whatsapp.com/896930805262380) | not shown | 90 seconds, first 90 seconds, 3GP or MP4, 1 GB free to share |
+| [WhatsApp edit, save and delete status](https://faq.whatsapp.com/8560797347309938) | not shown | 24 hours online, 1 GB to view |
+| [WhatsApp HD photos and videos](https://faq.whatsapp.com/759301289012856) | not shown | HD is not available for status |
+| [WhatsApp music on Status](https://faq.whatsapp.com/2328947994154988) | not shown | Catalog music, 15 seconds on an image, 90-second video |
+| [WhatsApp Share to Status](https://faq.whatsapp.com/669870872481343) | not shown | Android and iOS hand-off. The tabs differ |
+| [WhatsApp send media](https://faq.whatsapp.com/453914586839706) | not shown | Chat video defaults. Status duration is repeated there |
+| [WhatsApp status ads image quality](https://faq.whatsapp.com/550664524802386) | not shown | Ads only. 9:16 and 500×320 stay out of the organic tables |
+| [WhatsApp Cloud API media](https://developers.facebook.com/documentation/business-messaging/whatsapp/business-phone-numbers/media/) | 2026-10-30 | Business message upload limits. Not Status |
+| [WhatsApp Cloud API video messages](https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/video-messages/) | 2026-11-04 | Business video message send. Not Status |
+| [WhatsApp On-Premises API sunset](https://developers.facebook.com/docs/whatsapp/on-premises/sunset) | not shown | On-Premises client expired 2025-10-23. Old sizes not copied |
 | [YouTube recommended upload encoding](https://support.google.com/youtube/answer/1722171?hl=en) | not shown | Encoding recommendations |
 | [YouTube uploads longer than 15 minutes](https://support.google.com/youtube/answer/71673?hl=en) | not shown | Duration and file size |
 | [Three-minute YouTube Shorts](https://support.google.com/youtube/answer/15424877?hl=en) | not shown | Shorts duration and categorization |
