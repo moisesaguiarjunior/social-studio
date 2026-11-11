@@ -126,6 +126,32 @@ git init -q --bare ../empty.git
 push "refs/heads/feature $tip refs/heads/feature $zero" origin ../empty.git
 expect pass "pre-push accepts a reviewed commit to an empty destination" $?
 
+# Git exports GIT_DIR and friends to hooks, always in linked worktrees.
+# Flutter derives its own version through git, so those variables must not
+# reach the package checks. A stub `flutter` fails if they leak.
+mkdir -p "$work/stub"
+cat >"$work/stub/flutter" <<'STUB'
+#!/usr/bin/env bash
+if [ -n "${GIT_DIR:-}${GIT_INDEX_FILE:-}${GIT_WORK_TREE:-}" ]; then
+  echo "git variables leaked into flutter" >&2
+  exit 1
+fi
+exit 0
+STUB
+chmod +x "$work/stub/flutter"
+git checkout -q main
+git worktree add -q ../linked
+(
+  cd ../linked
+  git config core.hooksPath tool/hooks
+  mkdir -p app/lib
+  printf 'name: app\nenvironment:\n  sdk: ^3.13.0\ndependencies:\n  flutter:\n    sdk: flutter\n' >app/pubspec.yaml
+  printf 'int answer() => 42;\n' >app/lib/app.dart
+  git add app
+  PATH="$work/stub:$PATH" git commit -q -m "feat: flutter package from a linked worktree" >/dev/null 2>&1
+)
+expect pass "hooks clear git variables before running flutter (linked worktree)" $?
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
   exit 1

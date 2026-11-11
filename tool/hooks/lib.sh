@@ -9,6 +9,9 @@ check_package() {
   local pkg="$1" runner=dart
   if grep -q 'sdk: flutter' "$pkg/pubspec.yaml"; then runner=flutter; fi
   (
+    # Git exports GIT_DIR and friends to hooks (always in linked worktrees).
+    # Flutter derives its own version through git, so they must not leak.
+    unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX GIT_COMMON_DIR
     cd "$pkg" || exit 1
     "$runner" pub get --offline >/dev/null 2>&1 || "$runner" pub get >/dev/null || exit 1
     dart format --output=none --set-exit-if-changed . || exit 1
