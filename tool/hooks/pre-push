@@ -60,10 +60,18 @@ while read -r _local_ref local_sha remote_ref _remote_sha; do
   for commit in $commits; do
     snapshot="$(mktemp -d)"
     git archive "$commit" | tar -x -C "$snapshot"
-    for pkg in $(packages_in "$snapshot"); do
+    changed="$(mktemp)"
+    git diff-tree --root --no-commit-id --name-only --no-renames -z -r -m "$commit" >"$changed"
+    if hook_checks_required <"$changed"; then
+      echo "pre-push: checking hook regressions at ${commit:0:7}"
+      check_hook_suite "$snapshot" || status=1
+    fi
+    rm -f "$changed"
+    while IFS= read -r pkg; do
+      [ -n "$pkg" ] || continue
       echo "pre-push: checking ${pkg#"$snapshot"/} at ${commit:0:7}"
       check_package "$pkg" || status=1
-    done
+    done < <(packages_in "$snapshot")
     rm -rf "$snapshot"
   done
 done

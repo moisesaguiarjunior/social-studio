@@ -11,9 +11,10 @@ check_package() {
   (
     # Git exports GIT_DIR and friends to hooks (always in linked worktrees).
     # Flutter derives its own version through git, so they must not leak.
-    unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX GIT_COMMON_DIR
+    clear_git_environment
     cd "$pkg" || exit 1
-    "$runner" pub get --offline >/dev/null 2>&1 || "$runner" pub get >/dev/null || exit 1
+    "$runner" pub get --offline --enforce-lockfile >/dev/null 2>&1 ||
+      "$runner" pub get --enforce-lockfile >/dev/null || exit 1
     dart format --output=none --set-exit-if-changed . || exit 1
     "$runner" analyze --fatal-infos || exit 1
     if [ -d test ]; then "$runner" test || exit 1; fi
@@ -39,4 +40,37 @@ package_of() {
     [ "$dir" = "." ] && return
     dir="$(dirname "$dir")"
   done
+}
+
+# hook_checks_required: consume NUL-delimited paths on stdin. Git quotes
+# unusual names without -z; newline-delimited paths also split valid names.
+# Drain the input so a pipeline cannot hide a match through SIGPIPE.
+hook_checks_required() {
+  local file required=1
+  while IFS= read -r -d '' file; do
+    case "$file" in
+      tool/*|.github/workflows/*) required=0 ;;
+    esac
+  done
+  return "$required"
+}
+
+# check_hook_suite <snapshot>: never fall through when the suite is deleted.
+check_hook_suite() {
+  local snapshot="$1"
+  if [ ! -f "$snapshot/tool/test_hooks.sh" ]; then
+    echo "hook checks: the regression suite is missing." >&2
+    return 1
+  fi
+  (
+    clear_git_environment
+    cd "$snapshot" || exit 1
+    bash tool/test_hooks.sh || exit 1
+  )
+}
+
+# Call only in a child environment; SDK commands must not inherit Git's
+# context for the repository being committed or pushed.
+clear_git_environment() {
+  unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX GIT_COMMON_DIR
 }

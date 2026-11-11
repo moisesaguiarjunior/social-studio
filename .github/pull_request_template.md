@@ -10,9 +10,17 @@
 
 <!-- What you searched for, what you reused, what you created and why the existing code did not fit. -->
 
+## System review
+
+<!-- Canonical implementation/callers checked; why the change belongs here;
+second sources of truth avoided; acceptance criteria the tests might miss.
+Code, tests and documentation agreeing does not prove the premise is right. -->
+
 ## Verification
 
-<!-- Commands you ran, results, devices and versions. What was not verified. -->
+<!-- Commands, results, relevant software versions and unverified behavior.
+No identifying machine/device details. Distinguish retained regression tests
+from disposable experiments; do not claim a gate from an unrelated failure. -->
 
 ## Checklist
 

@@ -8,21 +8,27 @@ root="$(git rev-parse --show-toplevel)"
 cd "$root"
 source tool/hooks/lib.sh
 
-changed="$(git diff --cached --name-only --no-renames)"
-[ -z "$changed" ] && exit 0
-
 snapshot="$(mktemp -d)"
 trap 'rm -rf "$snapshot"' EXIT
-git checkout-index --all --prefix="$snapshot/"
+git diff --cached --name-only --no-renames -z >"$snapshot/changed-paths"
+[ -s "$snapshot/changed-paths" ] || exit 0
+# Keep metadata outside the index snapshot to avoid overwriting staged files.
+changed="$snapshot/changed-paths"
+mkdir "$snapshot/content"
+git checkout-index --all --prefix="$snapshot/content/"
+
+if hook_checks_required <"$changed"; then
+  check_hook_suite "$snapshot/content" || exit 1
+fi
 
 packages="$(
-  while IFS= read -r path; do
-    package_of "$snapshot" "$path"
-  done <<<"$changed" | sort -u
+  while IFS= read -r -d '' path; do
+    package_of "$snapshot/content" "$path"
+  done <"$changed" | sort -u
 )"
 [ -z "$packages" ] && exit 0
 
 while IFS= read -r pkg; do
   echo "pre-commit: checking $pkg (staged content)"
-  check_package "$snapshot/$pkg"
+  check_package "$snapshot/content/$pkg"
 done <<<"$packages"

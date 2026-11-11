@@ -2,7 +2,7 @@
 
 Turn app content into **finished, ready-to-post social media pieces with art direction**: Instagram Stories and feed posts, Reels, TikTok, YouTube Shorts and horizontal YouTube videos.
 
-Status: specification draft (2026-11-11). Nothing is implemented yet. Technical choices below are proposals to be confirmed by the evaluation in phase 0.
+Status: evaluation and synthetic probes; no distributed renderer yet. The phase 0 recommendation is conditional (see `docs/evaluation.md`). Technical choices below remain subject to that evidence.
 
 ## Goals
 
@@ -94,3 +94,17 @@ The first consumers are mobile apps built with Flutter, where the content is per
 ## Contributing
 
 Issues and pull requests are welcome once phase 0 is published. Read [CONTRIBUTING.md](CONTRIBUTING.md): the code standards, local review hooks and independent review apply to human and AI contributors alike. By contributing you agree that your contributions are licensed under the [Apache License 2.0](LICENSE).
+
+
+## Repository checks
+
+Run `bash tool/check.sh` from any directory to check the checkout: hook
+regressions, then format, strict analysis and tests for each Dart/Flutter
+package. The Quality workflow uses the same entry point, SDK version 3.47.9
+and Python 3.12. It runs on every pull request and pushes to main; there are
+no workflow path filters that could leave a required check pending.
+
+Local hooks still check snapshots: staged content at commit time and every
+newly published commit before push. Tool/workflow changes also run hook
+regressions, even when no package owns the file. Independent local review
+is still required before any branch is pushed. See [verification and limits](docs/verification/repository-gates.md).

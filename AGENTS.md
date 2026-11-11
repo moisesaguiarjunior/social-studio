@@ -24,8 +24,8 @@ This is a public repository: the bar is state-of-the-art, clean code. Everything
 
 ## Before finishing
 
-Run format, analysis and tests. Report what you ran, the results, the devices and versions used, and what was not verified.
+Run `bash tool/check.sh` (hook regressions plus package format, strict analysis and tests). Report commands, results, relevant software versions and unverified behavior. Never include identifying machine/device details; see CONTRIBUTING.md.
 
 ## Reviews
 
-Changes are reviewed by another assistant (Codex or Claude), starting without the author's reasoning, running the checks and reporting findings with file, line, failure scenario and severity. Outcomes: no blocking findings, changes required, or verification incomplete.
+Changes are reviewed by another assistant (Codex or Claude), starting without the author's reasoning. Review against the existing system and original requirement, not only the diff: search canonical implementations/callers, second sources of truth and missing acceptance criteria. Code, tests and docs may share a wrong premise. Run the checks and report findings with file, line, failure scenario and severity. Outcomes: no blocking findings, changes required, or verification incomplete.

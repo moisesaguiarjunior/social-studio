@@ -94,3 +94,16 @@ The FFmpeg wasm core is listed under downloaded binaries. It is GPL.
 The rest of the probe lock (`async`, `collection`, `fake_async`, `matcher`, `leak_tracker`, `source_span`, `test_api`, and the other SDK test packages) was read from each package `LICENSE`. They are BSD-3-Clause (Dart or Flutter authors) or Apache-2.0 (`clock` 1.1.3, `fake_async` 1.3.3, `material_color_utilities` 0.13.0). None is GPL. The Flutter engine `sky_engine` notice file is a bundle of third-party texts; this evaluation did not re-classify that bundle line by line. The engine is used as the SDK that ships with Flutter 3.47.9.
 
 `image` 4.8.0, read because `widget_recorder_plus` depends on `image: ^4.1.7`, is MIT, copyright 2013–2022 Brendan Duncan. That version was not locked by a `widget_recorder_plus` solve.
+
+
+## CI-only actions
+
+Pinned by immutable revision in `.github/workflows/quality.yml`, verified from
+the upstream repository/tag and LICENSE on 2026-11-11. They are workflow tools,
+not app dependencies. SDK versions are configured separately in the workflow.
+
+| Action | Pinned revision | License | Source |
+| --- | --- | --- | --- |
+| actions/checkout (v5) | `fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09` | MIT | https://github.com/actions/checkout |
+| subosito/flutter-action (v2) | `1a449444c387b1966244ae4d4f8c696479add0b2` | MIT | https://github.com/subosito/flutter-action |
+| actions/setup-python (v6) | `ece7cb06caefa5fff74198d8649806c4678c61a1` | MIT | https://github.com/actions/setup-python |

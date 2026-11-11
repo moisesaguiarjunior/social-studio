@@ -5,7 +5,7 @@
 set -uo pipefail
 
 src="$(cd "$(dirname "$0")" && pwd)"
-work="$(mktemp -d)"
+work="$(mktemp -d)" || exit 1
 trap 'rm -rf "$work"' EXIT
 zero=0000000000000000000000000000000000000000
 failures=0
@@ -23,23 +23,28 @@ expect() { # expect <reject|pass> <description> <exit code>
 push() { echo "$1" | "$hook_shell" tool/hooks/pre-push "${2:-origin}" "${3:-../${2:-origin}.git}" >/dev/null 2>&1; }
 raw_commit() { git -c core.hooksPath=/dev/null commit -q "$@"; }
 
-cd "$work"
+source "$src/hooks/lib.sh" || exit 1
+clear_git_environment || exit 1
+cd "$work" || exit 1
 hook_shell="${HOOK_SHELL:-bash}"
-git init -q --bare origin.git
-git init -q --bare backup.git
-git init -q repo
-cd repo
+git init -q --bare origin.git || exit 1
+git init -q --bare backup.git || exit 1
+git init -q repo || exit 1
+cd repo || exit 1
 git config user.name tester
 git config user.email tester@example.com
 git remote add origin ../origin.git
 git remote add backup ../backup.git
-mkdir -p tool pkg/lib
-cp -R "$src/." tool/
+mkdir -p tool pkg/lib || exit 1
+cp -R "$src/." tool/ || exit 1
+# Fixture commits contain a tiny suite, not this driver: checking a root
+# commit or a tool change must not recursively start the full driver.
+printf '#!/usr/bin/env bash\nexit 0\n' >tool/test_hooks.sh
 printf 'name: probe\nenvironment:\n  sdk: ^3.13.0\n' >pkg/pubspec.yaml
 printf "import 'helper.dart';\n\nint run() => helper();\n" >pkg/lib/main.dart
 printf 'int helper() => 1;\n' >pkg/lib/helper.dart
 printf '.dart_tool/\n' >.gitignore
-(cd pkg && dart pub get >/dev/null)
+(cd pkg && dart pub get >/dev/null) || exit 1
 git add -A
 raw_commit -m init
 git -c core.hooksPath=/dev/null push -q origin HEAD:main
@@ -159,6 +164,103 @@ git worktree add -q --detach ../reviewer feature
 (cd ../reviewer && bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1)
 push "refs/heads/feature $(git rev-parse feature) refs/heads/feature $zero"
 expect pass "a review recorded in another worktree is honored on push" $?
+
+# Changes outside a package still need the hook regression gate. Every
+# command below targets only this disposable repository and its bare remote.
+git reset -q --hard "$tip"
+printf '#!/usr/bin/env bash\nexit 7\n' >tool/test_hooks.sh
+git add tool/test_hooks.sh
+printf '#!/usr/bin/env bash\nexit 0\n' >tool/test_hooks.sh
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "hook regressions use the staged suite, not a fixed working copy" $?
+git reset -q --hard "$tip"
+
+git rm -q tool/test_hooks.sh
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "deleting the hook suite fails closed" $?
+git reset -q --hard "$tip"
+
+printf '#!/usr/bin/env bash\nexit 9\n' >tool/test_hooks.sh
+git add tool/test_hooks.sh
+raw_commit -m "fixture: failing hook suite"
+bad_suite="$(git rev-parse HEAD)"
+printf 'hook change\n' >tool/note.txt
+git add tool/note.txt
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "tool changes outside any package run hook regressions" $?
+git reset -q --hard "$bad_suite"
+
+# Only the unusual-name commit is new to this fixture destination: an older
+# failing-suite commit must not mask a missed path match in pre-push.
+git init -q --bare ../path-origin.git
+git -c core.hooksPath=/dev/null push -q ../path-origin.git "$bad_suite:refs/heads/base"
+for unusual in 'tool/unicode-é.sh' 'tool/quoted"name.sh' $'tool/newline\nname.sh'; do
+  printf 'tool change\n' >"$unusual"
+  git add -- "$unusual"
+  bash tool/hooks/pre-commit >/dev/null 2>&1
+  expect reject "pre-commit detects unusual path: $unusual" $?
+  raw_commit -m "fixture: unusual tool path"
+  bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+  push "refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero" path-origin
+  expect reject "pre-push detects unusual path: $unusual" $?
+  git reset -q --hard "$bad_suite"
+done
+
+mkdir -p .github/workflows
+printf 'name: fixture\n' >.github/workflows/fixture.yml
+git add .github/workflows/fixture.yml
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "workflow changes run hook regressions" $?
+git reset -q --hard "$bad_suite"
+
+printf 'documentation only\n' >note.md
+git add note.md
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect pass "unrelated documentation does not run hook regressions" $?
+git reset -q --hard "$bad_suite"
+
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+push "refs/heads/feature $bad_suite refs/heads/feature $zero"
+expect reject "pre-push rejects a committed failing suite" $?
+printf '#!/usr/bin/env bash\nexit 0\n' >tool/test_hooks.sh
+git add tool/test_hooks.sh
+raw_commit -m "fixture: repair suite after a bad intermediate commit"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+push "refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero"
+expect reject "pre-push runs the hook suite in each newly published commit" $?
+git reset -q --hard "$tip"
+
+git rm -q tool/test_hooks.sh
+raw_commit -m "fixture: remove hook suite"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+push "refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero"
+expect reject "pre-push rejects removal of the hook suite" $?
+git reset -q --hard "$tip"
+
+printf 'safe tool change\n' >tool/note.txt
+git add tool/note.txt
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect pass "a passing hook suite accepts a tool-only change" $?
+raw_commit -m "fixture: safe tool change"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+push "refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero"
+expect pass "pre-push accepts a reviewed passing hook suite" $?
+
+# CI uses the same checked-in entry point, independent of installed hooks.
+bash tool/check.sh >/dev/null 2>&1
+expect pass "the CI entry point accepts a clean checkout" $?
+printf 'int helper( => ;\n' >pkg/lib/helper.dart
+bash tool/check.sh >/dev/null 2>&1
+expect reject "the CI entry point rejects a failing package" $?
+printf 'int helper() => 2;\n' >pkg/lib/helper.dart
+rm pkg/pubspec.lock
+bash tool/check.sh >/dev/null 2>&1
+expect reject "repository checks require the committed lockfile" $?
+# Restore the fixture lock without weakening checks in the real repository.
+git restore pkg/pubspec.lock
+printf '#!/usr/bin/env bash\nexit 6\n' >tool/test_hooks.sh
+bash tool/check.sh >/dev/null 2>&1
+expect reject "the CI entry point rejects a failing hook suite" $?
 
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
