@@ -42,6 +42,7 @@ Everything pushed to this repository is public, including branches. Nothing reac
 - **Every check must be able to fail.** When adding a guard or test, show it fails without the protected behavior (mutation check). A test that cannot fail is removed.
 - Visual output is protected by goldens and conformance jobs. Golden updates need explicit review of each changed image; never regenerate goldens to make CI green.
 - Synthetic data only. Never real people's photos, voices or transcripts.
+- **Never commit details of the maintainer's machine or devices**: model, chip, serial number, OS version or build, disk space, computer name, paths containing the user name, device or emulator IDs. This applies to code, docs, evidence, test output, commit messages and pull request descriptions. Describe environments generically ("local development machine", "desktop, not a phone") and record only software versions that matter to a result (Flutter, Dart, packages). Device classes required by criteria (for example "mid-range Android") are fine; the maintainer's specific devices are not. Strip absolute paths and machine identifiers from tool output before committing.
 
 ### Dependencies
 
