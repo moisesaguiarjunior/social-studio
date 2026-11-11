@@ -7,6 +7,14 @@ product renderer, and nothing here is published (`publish_to: none`).
 flutter test
 ```
 
+The inspector controls supply the complete child-process environment, so a
+parent terminal's `FFPROBE` or `FLUVIE_FFMPEG` must not change their outcome.
+Check the missing-tool case with a deliberately invalid parent override:
+
+```sh
+FFPROBE=not-a-real-probe flutter test test/inspect_story15_test.dart --plain-name 'a missing ffprobe stays a partial inspection'
+```
+
 `PHASE0_EVIDENCE` may point at a directory. The determinism test then writes
 `frame0.png`, `frame59.png`, and `sha256.txt` there. The copies under
 `evidence/` are from the run recorded in the evaluation.
