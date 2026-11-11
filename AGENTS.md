@@ -16,6 +16,7 @@ This is a public repository: the bar is state-of-the-art, clean code. Everything
 - Every platform number (size, duration, file limit, safe zone) cites an official source and the date it was checked.
 - No network access during rendering. No analytics on content. Strip location and device metadata from outputs.
 - Synthetic data only in fixtures, examples, goldens and conformance jobs. Never real people's photos, voices or transcripts.
+- **Never commit details of the maintainer's machine or devices**: model, chip, serial number, OS version or build, disk space, computer name, paths containing the user name, device or emulator IDs. This applies to code, docs, evidence, test output, commit messages and pull request descriptions. Describe environments generically ("local development machine", "desktop, not a phone") and record only software versions that matter to a result (Flutter, Dart, packages). Device classes required by criteria (for example "mid-range Android") are fine; the maintainer's specific devices are not. Strip absolute paths and machine identifiers from tool output before committing.
 - No GPL/AGPL dependencies in distributed packages. Record every dependency license in `docs/dependencies.md`.
 - No bundled copyrighted music.
 - The engine never decides what may be shared; consuming apps pass only authorized content.
