@@ -2,9 +2,10 @@
 
 Status of this document:
 
-- **Criteria locked:** 2026-11-11, before any package was fetched, any source tree was opened for this evaluation, or any probe was run.
-- **Results:** not filled yet. Sections under "Results" stay empty until the probes and source checks below have been run. Filling them is a later change.
-- **What this is:** an evaluation proposal and, once filled, an evidence record. It does not by itself adopt a dependency. Adopting one is a later decision, recorded in `docs/decisions/` when it is made.
+- **Criteria locked:** 2026-11-11, before any package was fetched, any source tree was opened for this evaluation, or any probe was run. The criteria section below is that locked text.
+- **Results filled:** 2026-11-11, in a later commit. Scores use the locked criteria. They were not edited to match the probes.
+- **Labels narrowed:** 2026-11-11, after independent review of the results commit. The criteria section was not edited. L1 is no longer labeled pass. The G1 network clause is not verified, so G1 is not an aggregate pass. The recommendation is a candidate for partial adoption, to validate on the phase 1 mobile prototype.
+- **What this is:** an evaluation record. It does not adopt a dependency. Adopting one is a later decision, recorded in `docs/decisions/` when it is made.
 
 Base of the branch: local `docs/contribution-standards` at `6f601d7` (itself ahead of published `origin/main` at `8a84e43`). This evaluation does not republish that branch.
 
@@ -174,4 +175,165 @@ These thresholds were set with the criteria, before the counts were collected:
 
 ## Results
 
-Not collected. The criteria above are the whole evaluation so far.
+Collected 2026-11-11. Versions were read from the pub.dev API before the probes and were not upgraded after that.
+
+| Package | Version | Published |
+| --- | --- | --- |
+| `fluvie`, `fluvie_mobile_encoder`, `fluvie_cli`, `fluvie_web_encoder` | 0.3.1 | 2026-07-16 |
+| `lottie` (Flutter) | 3.8.2 | 2026-11-02 |
+| `widget_recorder_plus` | 1.0.6 | 2026-09-24 |
+| `flutter_quick_video_encoder` | 1.7.2 | 2024-09-20 |
+
+The published 0.3.1 tree is the one under test. The Fluvie default branch had been pushed later (2026-10-07, commit `10e442c1bb` on GitHub). That unreleased tree was not probed.
+
+### Machine and what it is not
+
+- A local development machine (desktop, not a phone).
+- Flutter 3.47.9, framework `c197ca5199` (2026-10-29), engine `89c39edfdf` (2026-10-27), Dart 3.13.7, channel stable.
+- Headless captures used `flutter_tester` with `--enable-software-rendering --skia-deterministic-rendering --use-test-fonts --disable-asset-fonts`.
+- `flutter devices` on 2026-11-11: a desktop target and a browser. No phone. An emulator was listed offline and was not started.
+
+This desktop is not a P1 phone. Numbers below are headless evidence.
+
+Published `main` when these results were written was `59ecc84`.
+
+### L1 — Package licenses — fail clause not met; pass list missed by two licenses
+
+The fail clause is GPL or AGPL in a distributed package, or a GPL/AGPL binary linked into an app or a shipped package. No package LICENSE opened for this evaluation was GPL or AGPL. Missing the fail clause does not prove the pass clause.
+
+The pass clause names MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC, and MPL-2.0 with its file-level obligations written down. Two licenses in the inventory are outside that list. They are exceptions, with the reason beside each one. They are not L1 passes.
+
+**Exception: SIL Open Font License 1.1.** `fluvie` 0.3.1 ships JetBrains Mono (`fonts/OFL.txt`, copyright 2020 The JetBrains Mono Project Authors). OFL is not GPL or AGPL. The font may be bundled with software when the license text is kept and the reserved font name is not reused. The package that would ship contains this font, so the exception is inside the candidate, not only in a fallback.
+
+**Exception: Unlicense.** `flutter_quick_video_encoder` 1.7.2 is Unlicense. It is a fallback encoder. It was not benchmarked and it is not a dependency of `fluvie`. It is outside the pass list. It is not GPL or AGPL.
+
+Every other Dart package LICENSE opened for the candidates, their direct dependencies, and the probe lock is MIT, BSD-3-Clause, or Apache-2.0. The file list is `docs/dependencies.md`.
+
+### L2 — FFmpeg and other downloaded binaries — pass on device, fail for the CLI and the web core
+
+**On-device encoder: pass**, from the published 0.3.1 sources. `ios/Classes/FluvieMobileEncoderPlugin.swift` encodes with `AVAssetWriter` and VideoToolbox and states there is no FFmpeg and no bundled codec. `android/.../FluvieMobileEncoderPlugin.kt` encodes with `MediaCodec` and `MediaMuxer` and states the same. The podspec says "No FFmpeg, no bundled codec, no network." No device encode was run, so this pass is a source reading of the package that would ship, not a phone measurement.
+
+**Headless CLI: fail.** The pin in `fluvie_cli` 0.3.1 `lib/src/ffmpeg/ffmpeg_release.dart` is labeled `FFmpeg 8.1 GPL (BtbN 2026-05-31, evermeet, osxexperts)`. That file lists one archive per host. One of those archives was downloaded and checked on 2026-11-11. Its size was 22,547,387 bytes and its SHA-256 was `ebb82529562b71170807bbc6b0e7eb4f0b13af8cbb0e085bb9e8f6fe709598ad`, both matching its pin. `ffmpeg -version` reports FFmpeg 8.1 and `--enable-gpl --enable-libx264` together with `--pkg-config-flags=--static`. The other archives in that file were not downloaded.
+
+The binary is invoked as a separate process. Its license is GPL, not LGPL or a permissive license, so the headless pass condition is not met. The binary was not copied into this repository.
+
+**Web encoder: fail** for the same reason. The package README and `example/web/index.html` load `@ffmpeg/ffmpeg`, which fetches an FFmpeg core. npm registry on 2026-11-11: `@ffmpeg/core` 0.12.10 is `GPL-2.0-or-later`; `@ffmpeg/ffmpeg` 0.12.15 and `@ffmpeg/util` 0.12.2 are MIT. The core was not downloaded and the web encoder was not run. The GPL identifier is the registry license field.
+
+### D1 — Same machine, same frames — pass
+
+Command, from `probes/phase0`, after `flutter pub get`:
+
+```sh
+flutter test test/determinism_test.dart --reporter expanded
+```
+
+The test calls `renderVideo` twice on one synthetic 1080×1920, 30 fps, 2.0 s composition (flat `#E23D3D`, the text `Ag Á` in Roboto at 64 px, one rectangle moving on a Fluvie `Animation.fromTo`). Host: `tester.runAsync`, `pumpFrame: () => tester.pump()` (zero duration, the same shape as the CLI harness).
+
+Both captures were 497,664,000 bytes (1080 × 1920 × 4 × 60). SHA-256 of each raw buffer:
+
+`14200943e85286bdab40941695b3a2f2ab8e7bb8ae19fc3a5a465e37d474e90a`
+
+The test also requires the center pixel of frame 0 to be `0xE23D3D`, more than 50 non-background pixels in the text box (measured 2600), and frame 0 bytes different from frame 59. It passed in about 50 seconds of test time.
+
+`evidence/frame0.png` and `evidence/frame59.png` are those two frames. The rectangle is on the left in frame 0 and on the right in frame 59. The glyphs `Ag Á` are readable in both.
+
+A separate observation, not the D1 proof: two headless encodes of the 2-second shape job produced byte-identical MP4 files (SHA-256 `13f4a275f9d557a6e962ce3a54c679a7e9fe5dfddbc3bd12f1b7e12030442c4c`). The encode plan includes `libx264` and the bitexact flags in `ffmpeg_args.dart`.
+
+### D2 — Headless versus on-device — not verified
+
+No device run.
+
+### Q1 — Picture at 1080×1920 — pass headless, not verified on device
+
+The D1 capture is 1080×1920. The center pixel reads back as `#E23D3D` (difference 0, inside ±2). The text region is not blank (2600 pixels). The PNGs are in `probes/phase0/evidence/`.
+
+### P1 — Fifteen seconds on a phone — not verified
+
+No Pixel 6a, Galaxy A54, Moto G84, iPhone 13, iPhone SE (3rd generation), iPhone 14, iPhone 15, or iPhone 16 was attached. The desktop timing below is outside P1.
+
+**Headless contributor check: pass.** The 15.0 s job (1080×1920, 30 fps, 450 frames, generated swatch, `Animation.kenBurns(zoom: 1.08)`, caption `Hello`, 440 Hz tone) finished in **13.67 s** wall time (`time -p` real) on 2026-11-11, from 18:52:51Z to 18:53:06Z. The limit is 10 minutes. The command that was timed, from a throwaway project:
+
+```sh
+fluvie render lib/story_15.dart --out story15.mp4 --poster 0s
+```
+
+That project was deleted after the measurements were written down. The scene is now `probes/phase0/lib/story_15.dart`. The timed copy used absolute paths to the generated swatch and tone. The repository copy uses `assets/swatch.png` and `assets/tone.wav`, written by `probes/phase0/tool/generate_story15_assets.py`. The FFmpeg binary and the MP4 are not in the repository. Container, codecs, color tags, `moov` position, and file size are inspected with `probes/phase0/tool/inspect_story15.py`. Those properties were not re-measured for this note, so they stay not verified. The numbers in this section are from the 2026-11-11 run.
+
+`fluvie` was `dart pub global activate fluvie_cli 0.3.1`. `FLUVIE_FFMPEG` pointed at the verified binary above so the render did not download it again. The output is 15.00 s, 450 frames, 1080×1920 H.264 at 30 fps, AAC mono. `volumedetect` reported mean −17.0 dB and max −13.6 dB.
+
+### G1 — Phase 1 shape — four media checks passed headless; the no-network check is not verified
+
+| Capability | Result | Evidence |
+| --- | --- | --- |
+| Still image with slow motion | pass | Decoded frame 0 and frame 300 of the 15 s file differ in 71,773 of 490,000 pixels (14.65%) inside the center 700×700. The composition is `Image.file` of a generated 540×540 swatch plus `Animation.kenBurns(zoom: 1.08)`. |
+| Voice track | pass | AAC stream present. Duration 15.00 s, inside one frame of 15.0 s at 30 fps. Mean volume −17.0 dB on the 440 Hz tone. |
+| Burned-in captions | pass | `Captions.words` with `Hello` at time zero is pixels on the cover. See `evidence/shape-poster.png`. It is not a sidecar file. |
+| Cover frame | pass | `--poster 0s` wrote `short.poster.png` from the same composition. The D1 probe also wrote frame 0 as a PNG from the raw capture. |
+| No network during render | not verified | During the 2 s encode and the 15 s encode, `lsof` showed no established TCP connection whose command matched flutter, dart, ffmpeg, or fluvie. That sample can miss a short connection, UDP, and a failed attempt. No control job deliberately opened a connection. The FFmpeg download happened earlier, at tool setup, and is recorded under L2. The media-less D1 capture does not build a media resolver (`render_video.dart`). |
+
+The four media rows passed on this headless path. The no-network row did not. G1 requires each row to pass, so G1 is not an aggregate pass.
+
+The first CLI attempt failed in 4.4 s because a hand-written pubspec omitted `flutter_test` and `alchemist` (both are in the `fluvie init` scaffold; the harness imports them) and because `Image` was imported from Flutter and from Fluvie. After those two fixes the 2 s render completed in 8.18 s and wrote the MP4 and the poster.
+
+### G2 — Known gaps
+
+1. **iOS video clips: not implemented.** `FluvieMobileEncoderPlugin.swift` handles only the method `encode`; anything else returns `FlutterMethodNotImplemented`. `native_frame_extraction_service.dart` maps `MissingPluginException` to code `unimplemented` with the message "On-device frame extraction is not available on this platform (Android only)." The README (lines 125–127) says the same. No iPhone was available, so this was not also shown at runtime. Image and text are a separate path and the README says those render on both platforms. That second sentence was not run on a device.
+2. **Audio mixing.** iOS `AudioComposer.swift` and Android `AudioMixEncoder.kt` both carry delay, volume, trim, fade-in, fade-out, and loop. The README still says "Looping beds and network sources are not honored on-device yet," which is behind those sources on looping. `BundleAudioMaterializer` throws `unsupported_audio_source` for `http://` and `https://` and tells the caller to use a `NetworkAudioMaterializer` with an allowlist. Headless mixing is the FFmpeg `amix` plan and needs the GPL binary. Runtime evidence is one headless music file, non-silent. Multiple tracks, per-track gain, delay, trim, fade, and loop were not run.
+3. **Dynamic Lottie text and image.** Flutter `LottieDelegates.text` changed the painted pixels of a synthetic composition (`label.json`, `BEFORE` to `AFTER`). The test passed. `LottieDelegates.image` was not run. `lottie-web` 5.13.0 and `lottie-react` 3.1.2 are MIT on npm. `lottie-web` 5.13.0 `index.d.ts` declares `updateDocumentData(path, documentData, index)`. Those players were not executed. Dynamic image, and dynamic text on web and React, are **not verified**.
+4. **Lottie inside a Fluvie scene.** The published Fluvie 0.3.1 tree has no Lottie integration. A synthetic moving-box composition painted 1600 non-background pixels inside the centered 400×400 box on frame 0 and on frame 20. With `tester.pump()` (zero duration, the CLI harness at `file_harness_template.dart` line 81) the box delta was 0. With `tester.pump(Duration(milliseconds: 33))` the box delta was 3240. The layer can appear in a captured frame. Its own clock does not advance under the current CLI pump, and it does advance when that pump elapses a frame. Open pull request 2 on `SimonErich/fluvie` ("fix(render): advance native Flutter animations during CLI capture", opened 2026-09-08, still open, no comments) describes the same clock gap. It is not merged and it is not a refusal.
+
+### H1 — Maintenance, checked 2026-11-11
+
+| Fact | Value |
+| --- | --- |
+| Repository | https://github.com/SimonErich/fluvie |
+| Created | 2025-11-24 |
+| First `fluvie` release | 2026-06-21 (pub.dev) |
+| Pinned publish | 2026-07-16 (0.3.1) |
+| Default branch pushed | 2026-10-07 |
+| Human contributors returned by the GitHub API | 1 (`SimonErich`, 279 contributions) |
+| Stars / forks | 10 / 4 |
+| License | MIT |
+| Open issues | 1, which is pull request 2 |
+| Pull request 2 | Open since 2026-09-08, 0 comments, 0 review comments, not merged |
+| Tests | The published packages ship tests in the upstream monorepo. This evaluation did not run the upstream suite. The CLI render path did run `flutter test` for its generated harness. |
+| CI | Not inspected beyond the public repository metadata. |
+| CONTRIBUTING | Fluvie documents contribution on its repository. An external patch does not need private Social Studio infrastructure. Building the unpacked 0.3.1 CLI tarball with `dart pub get` fails because `pubspec.yaml` contains `resolution: workspace`. `dart pub global activate fluvie_cli 0.3.1` succeeds. |
+
+The risk flag needs one committer and no commit in the six months before the check and an open bug on a needed capability. The first and the third are true. The second is not: the default branch was pushed on 2026-10-07. The unanswered pull request is a maintenance signal. It is not a refusal, and it is not a fork trigger.
+
+### Fallbacks
+
+The on-device encoder sources do not bundle FFmpeg, and the four media checks of the phase 1 shape passed headlessly. The fallbacks were not benchmarked.
+
+- `widget_recorder_plus` 1.0.6, MIT, "Copyright (c) 2026 Widget Recorder Contributors". It is a screen recorder (MP4, optional microphone, GIF, screenshot), not a composition engine. Direct dependencies: `path_provider` and `image`. `image` 4.8.0, the version whose LICENSE was read, is MIT, copyright 2013–2022 Brendan Duncan. The package constraint is `^4.1.7`; that dependency was not locked.
+- `flutter_quick_video_encoder` 1.7.2, published 2024-09-20, Unlicense. README and the iOS sources use AVFoundation. The Android Gradle file sets a library namespace and does not reference FFmpeg. It encodes raw frames. It is not a scene graph. The repository was last pushed on the publish date.
+
+### Recommendation
+
+**Candidate for partial adoption, to validate on the phase 1 mobile prototype.**
+
+The full phase 1 piece (still, slow scale, voice, burned-in caption, cover) ran on the desktop headless path with FFmpeg. The published mobile-encoder sources use the platform API and do not bundle FFmpeg. That reading is favorable evidence. It does not show the same piece running on a phone. The candidate conclusion is recorded now. A device run is still required before treating on-device rendering as demonstrated.
+
+Use `fluvie` and `fluvie_mobile_encoder` as that candidate: a still, Fluvie-driven motion, a voice file, burned-in captions, and a cover, without a bundled encoder binary. Keep Lottie as a separate art layer. Contribute the capture-clock fix upstream (the open pull request is that fix) so a Lottie controller advances during a headless capture. Leave iOS video clips for a later upstream patch. Do not ship the GPL FFmpeg binary or `@ffmpeg/core` inside an app or a distributed package. GPL FFmpeg with libx264 is accepted only as a separate process in the developer tool (`docs/decisions/0002-ffmpeg-in-developer-tools.md`). L2 stays a fail for the CLI binary and the web core.
+
+The locked "adopt and contribute" label needs L1, L2, D1, and G1 to pass. L1 misses the pass list on two licenses. L2 fails for the CLI binary and the web core. G1 is not an aggregate pass while the network clause is not verified. P1 and D2 are not verified. The Lottie clock and the iOS clip path are real gaps. The four media checks passed on the headless path, and the on-device package does not bundle FFmpeg.
+
+The locked fork label needs a license that blocks use, a project that is gone, or a refused change that cannot live beside upstream. The engine license is MIT. The default branch was pushed on 2026-10-07. The clock fix is an open pull request, not a refusal. The GPL binary is an encode tool beside the engine.
+
+`docs/reuse.md` stays an empty map. The probe is evidence, not a product abstraction.
+
+### Not verified
+
+- Any phone or tablet, including every P1 device class. No on-device encode, no on-device quality, no D2 comparison. Peak memory, heating, and backgrounding in the middle of a render are in this group.
+- Audio/video sync in milliseconds. The headless file had an AAC stream and a measured loudness. The offset between a marked frame and the tone was not measured.
+- Whether the encoded file is postable: pixel format, color tags, `moov` at the start of the file, and size against platform limits. Duration, frame size, H.264, and AAC were read on the 2026-11-11 file. That file was not kept. The inspection command is `probes/phase0/tool/inspect_story15.py`.
+- No network call during render. See the G1 row. An established-TCP sample is not that proof.
+- iOS runtime of image and text, as distinct from the source reading.
+- Multiple audio tracks, gain, delay, trim, fade, and loop at runtime. Loop and the other controls are in the mobile sources.
+- `LottieDelegates.image`.
+- `lottie-web` and `lottie-react` at runtime.
+- The web encoder at runtime. Its core license was read from the npm registry.
+- The other FFmpeg archives named in `fluvie_cli` `lib/src/ffmpeg/ffmpeg_release.dart`. One archive was downloaded and matched its pin. The others were not downloaded. Their license follows the GPL build label in that file.
+- Upstream Fluvie's own test suite and CI.
+- Encoded output on a hardware encoder. The byte-identical MP4 pair is the software path of the desktop headless run.
