@@ -30,7 +30,8 @@ if printf '%s' "$author_trailers" | tr '[:upper:]' '[:lower:]' | grep -qw -- "$r
   exit 1
 fi
 
-dir="$(git rev-parse --git-path social-studio-reviews)"
+# Stored in the common git directory, shared by every linked worktree.
+dir="$(git rev-parse --path-format=absolute --git-common-dir)/social-studio-reviews"
 mkdir -p "$dir"
 {
   echo "commit: $head"
