@@ -152,6 +152,14 @@ git worktree add -q ../linked
 )
 expect pass "hooks clear git variables before running flutter (linked worktree)" $?
 
+# A review recorded in one linked worktree must be visible to a push made
+# from another worktree of the same repository.
+git checkout -q feature
+git worktree add -q --detach ../reviewer feature
+(cd ../reviewer && bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1)
+push "refs/heads/feature $(git rev-parse feature) refs/heads/feature $zero"
+expect pass "a review recorded in another worktree is honored on push" $?
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
   exit 1

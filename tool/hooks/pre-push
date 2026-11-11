@@ -29,7 +29,8 @@ while read -r sha _ref; do
   [ -n "$sha" ] && git cat-file -e "$sha^{commit}" 2>/dev/null && published+=("$sha")
 done <<<"$advertised"
 zero="0000000000000000000000000000000000000000"
-reviews="$(git rev-parse --git-path social-studio-reviews)"
+# Same location as tool/record-review.sh: shared by every linked worktree.
+reviews="$(git rev-parse --path-format=absolute --git-common-dir)/social-studio-reviews"
 status=0
 
 while read -r _local_ref local_sha remote_ref _remote_sha; do
