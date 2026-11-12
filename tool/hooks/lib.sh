@@ -19,7 +19,14 @@ check_package() {
       "$runner" pub get --enforce-lockfile >/dev/null || exit 1
     dart format --output=none --set-exit-if-changed . || exit 1
     "$runner" analyze --fatal-infos || exit 1
-    if [ -d test ]; then "$runner" test || exit 1; fi
+    if [ -d test ]; then
+      if [ "$runner" = flutter ] && [ "$(uname -s)" != Linux ]; then
+        echo "Linux golden comparisons skipped on this platform; other tests still run."
+        "$runner" test --exclude-tags golden || exit 1
+      else
+        "$runner" test || exit 1
+      fi
+    fi
   ) </dev/null
 }
 

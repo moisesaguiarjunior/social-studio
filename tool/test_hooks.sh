@@ -385,6 +385,46 @@ push "$ref
 refs/heads/feature $(git rev-parse HEAD) refs/heads/main $base"
 expect reject "a schema suite cannot consume a later prohibited push ref" $?
 
+# The package gate keeps structural tests on every platform while restricting
+# exact visual references to Linux. Fake only the external runner and platform;
+# exercise the real check_package branch and inspect its test arguments.
+mkdir -p "$work/platform-stub" "$work/platform-pkg/test"
+printf 'name: platform_probe\nenvironment:\n  sdk: ^3.13.0\ndependencies:\n  flutter:\n    sdk: flutter\n' >"$work/platform-pkg/pubspec.yaml"
+printf 'void main() {}\n' >"$work/platform-pkg/test/probe.dart"
+cat >"$work/platform-stub/flutter" <<'STUB'
+#!/usr/bin/env bash
+if [ "$1" = test ]; then printf '%s\n' "$*" >>"$PLATFORM_TEST_LOG"; fi
+exit 0
+STUB
+cat >"$work/platform-stub/uname" <<'STUB'
+#!/usr/bin/env bash
+if [ "${1:-}" = -s ]; then printf '%s\n' "$PLATFORM_NAME"; else /usr/bin/uname "$@"; fi
+STUB
+chmod +x "$work/platform-stub/flutter" "$work/platform-stub/uname"
+platform_log="$work/platform-tests.log"
+platform_output="$work/platform-output.log"
+: >"$platform_log"
+PATH="$work/platform-stub:$PATH" PLATFORM_NAME=Darwin PLATFORM_TEST_LOG="$platform_log" \
+  check_package "$work/platform-pkg" >"$platform_output" 2>&1
+expect pass "non-Linux package checks remain runnable" $?
+if grep -qx 'test --exclude-tags golden' "$platform_log" \
+  && grep -q 'Linux golden comparisons skipped' "$platform_output"; then
+  echo "ok   non-Linux package checks announce and skip exact goldens"
+else
+  echo "FAIL non-Linux package checks must announce and skip exact goldens"
+  failures=$((failures + 1))
+fi
+: >"$platform_log"
+PATH="$work/platform-stub:$PATH" PLATFORM_NAME=Linux PLATFORM_TEST_LOG="$platform_log" \
+  check_package "$work/platform-pkg" >"$platform_output" 2>&1
+expect pass "Linux package checks remain runnable" $?
+if grep -qx test "$platform_log"; then
+  echo "ok   Linux package checks run the exact goldens"
+else
+  echo "FAIL Linux package checks must run the exact goldens"
+  failures=$((failures + 1))
+fi
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
   exit 1

@@ -4,8 +4,15 @@ Synthetic checks for the evaluation in `docs/evaluation.md`. Nothing here is a
 product renderer, and nothing here is published (`publish_to: none`).
 
 ```sh
-flutter test
+flutter test --exclude-tags golden  # works on every development platform
+flutter test --tags golden          # Linux visual references only
 ```
+
+`bash tool/check.sh` runs both checks on the Linux CI runner. On other
+platforms it runs the non-golden tests and prints that the Linux visual
+comparison was skipped. The CI runner is pinned to Ubuntu 24.04 and Flutter
+3.47.9. The golden comparison is a desktop regression check, not an Android,
+iOS, or browser visual approval.
 
 The inspector controls supply the complete child-process environment, so a
 parent terminal's `FFPROBE` or `FLUVIE_FFMPEG` must not change their outcome.
@@ -15,14 +22,15 @@ Check the missing-tool case with a deliberately invalid parent override:
 FFPROBE=not-a-real-probe flutter test test/inspect_story15_test.dart --plain-name 'a missing ffprobe stays a partial inspection'
 ```
 
-`PHASE0_EVIDENCE` may point at a directory. The determinism test then writes
+`PHASE0_EVIDENCE` may point at a directory. The repeatability test then writes
 `frame0.png`, `frame59.png`, and `sha256.txt` there. The copies under
-`evidence/` are from the run recorded in the evaluation. The test now also
-compares captured frames 0 and 59 with those existing PNGs through Flutter's
-`matchesGoldenFile`. Two identical runs alone cannot catch a consistently
-wrong scene. References must not be regenerated to accommodate failures.
-These references cover the pinned headless test path; cross-platform and
-on-device visual equivalence still need separate evidence.
+`evidence/` are historical outputs from the phase 0 evaluation and retain
+their recorded hashes. They are never overwritten to fix a test. A separate
+`golden`-tagged test compares frames 0 and 59 with the Linux references in
+`test/goldens/`. Two identical captures alone cannot catch a consistently
+wrong scene. Update those references only after visual review on the pinned
+Linux environment. Cross-platform and on-device equivalence need separate
+evidence. See [decision 0008](../../docs/decisions/0008-linux-phase0-goldens.md).
 
 The 15-second encode used the published `fluvie_cli` 0.3.1. The scene is
 `lib/story_15.dart`. The timed run kept that scene in a throwaway directory
