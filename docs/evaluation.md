@@ -319,9 +319,11 @@ Use `fluvie` and `fluvie_mobile_encoder` as that candidate: a still, Fluvie-driv
 
 The locked "adopt and contribute" label needs L1, L2, D1, and G1 to pass. L1 misses the pass list on two licenses. L2 fails for the CLI binary and the web core. G1 is not an aggregate pass while the network clause is not verified. P1 and D2 are not verified. The Lottie clock and the iOS clip path are real gaps. The four media checks passed on the headless path, and the on-device package does not bundle FFmpeg.
 
+The phase 1 probe adds two on-device gaps in `fluvie` 0.3.1. The aspect path does not pre-resolve captions, so the caption layer throws and the export keeps no file. `OffscreenCaptureHost` does not run the post-frame callback that resolves motion, so an animated child stays at opacity 0. The emulator file that contains the still used a capture host that throws outside `LiveTestWidgetsFlutterBinding`. That host is test-only. Closing either gap is an upstream contribution or a thin package beside `fluvie`. The phase 0 labels in this document stay as recorded.
+
 The locked fork label needs a license that blocks use, a project that is gone, or a refused change that cannot live beside upstream. The engine license is MIT. The default branch was pushed on 2026-10-07. The clock fix is an open pull request, not a refusal. The GPL binary is an encode tool beside the engine.
 
-`docs/reuse.md` stays an empty map. The probe is evidence, not a product abstraction.
+This evaluation leaves `docs/reuse.md` empty. The probe is evidence, not a product abstraction.
 
 ### Not verified
 

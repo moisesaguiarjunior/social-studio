@@ -32,5 +32,10 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
+      # The Ubuntu 24.04 runner image does not ship ffmpeg. The distro
+      # package stays a separate process (docs/decisions/0002). Do not
+      # download the pinned GPL archive.
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Hook regressions and package checks
         run: bash tool/check.sh
