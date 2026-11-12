@@ -1034,6 +1034,35 @@ class RejectLines(SpecTest):
         cue["end_ms"] = 100
         errors = template_link_errors(templates["story-12"])
         self.assertIn("caption_interval captions", errors)
+        cue["end_ms"] = cue["start_ms"]
+        errors = validate_job(self.jobs["phase1-story-12"], self.profiles, templates)
+        self.assertIn("caption_interval captions", errors)
+
+    def test_colors_motion_presets_and_layers_reject_duplicate_ids(self):
+        job = self.jobs["phase1-story-12"]
+        for label in ("colors", "motion_presets", "layers"):
+            with self.subTest(collection=label):
+                templates = copy.deepcopy(self.templates)
+                story = templates["story-12"]
+                values = (
+                    story["brand_tokens"]["colors"] if label == "colors" else story[label]
+                )
+                values.append(copy.deepcopy(values[0]))
+                errors = validate_job(job, self.profiles, templates)
+                self.assertIn(f"duplicate_id {label} {values[0]['id']}", errors)
+
+    def test_an_audio_or_video_slot_rejects_text(self):
+        for kind, slot in (("audio", "voice"), ("video", "clip")):
+            with self.subTest(kind=kind):
+                templates = copy.deepcopy(self.templates)
+                job = copy.deepcopy(self.jobs["phase1-story-12"])
+                if kind == "video":
+                    templates["story-12"]["slots"].append(
+                        {"id": slot, "kind": "video", "required": False}
+                    )
+                job["data"][slot] = {"text": "Not an asset"}
+                errors = validate_job(job, self.profiles, templates)
+                self.assertIn(f"slot_value {slot}", errors)
 
     def test_referencable_ids_and_layout_keys_are_unique(self):
         templates = copy.deepcopy(self.templates)
