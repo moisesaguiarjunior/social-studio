@@ -1000,6 +1000,74 @@ class RejectLines(SpecTest):
             ["slot_unfilled photo[0]"],
         )
 
+    def test_a_slot_value_must_match_the_slot_kind(self):
+        image_as_text = copy.deepcopy(self.jobs["phase1-story-12"])
+        image_as_text["data"]["photo[0]"] = {"text": "Not an image asset"}
+        self.assertIn(
+            "slot_value photo[0]",
+            validate_job(image_as_text, self.profiles, self.templates),
+        )
+        text_as_asset = copy.deepcopy(self.jobs["phase1-story-12"])
+        text_as_asset["data"]["quote"] = {"asset_id": "synthetic-swatch"}
+        self.assertIn(
+            "slot_value quote",
+            validate_job(text_as_asset, self.profiles, self.templates),
+        )
+        quoted = copy.deepcopy(self.jobs["phase1-story-12"])
+        quoted["data"]["quote"] = {"text": "A synthetic line"}
+        self.assertEqual(validate_job(quoted, self.profiles, self.templates), [])
+
+    def test_a_layer_must_use_a_slot_of_the_same_kind(self):
+        templates = copy.deepcopy(self.templates)
+        photo = next(
+            layer for layer in templates["story-12"]["layers"] if layer["kind"] == "image"
+        )
+        photo["slot"] = "voice"
+        errors = validate_job(self.jobs["phase1-story-12"], self.profiles, templates)
+        self.assertIn("layer_slot photo", errors)
+
+    def test_a_caption_cue_must_end_after_it_starts(self):
+        templates = copy.deepcopy(self.templates)
+        cue = next(
+            layer for layer in templates["story-12"]["layers"] if layer["kind"] == "captions"
+        )["cues"][0]
+        cue["end_ms"] = 100
+        errors = template_link_errors(templates["story-12"])
+        self.assertIn("caption_interval captions", errors)
+
+    def test_referencable_ids_and_layout_keys_are_unique(self):
+        templates = copy.deepcopy(self.templates)
+        story = templates["story-12"]
+        story["slots"].append(dict(story["slots"][0], kind="text"))
+        self.assertIn("duplicate_id slots photo[0]", template_link_errors(story))
+        templates = copy.deepcopy(self.templates)
+        story = templates["story-12"]
+        story["layouts"].append(dict(story["layouts"][0]))
+        self.assertIn(
+            "duplicate_layout instagram-story share_hand_off -",
+            template_link_errors(story),
+        )
+        templates = copy.deepcopy(self.templates)
+        story = templates["story-12"]
+        specific = dict(story["layouts"][0])
+        specific["surface_id"] = "android"
+        story["layouts"].append(specific)
+        self.assertFalse(
+            any(item.startswith("duplicate_layout") for item in template_link_errors(story))
+        )
+
+    def test_an_integral_number_matches_integer(self):
+        job = copy.deepcopy(self.jobs["phase1-story-12"])
+        for value in (12000, 12000.0):
+            job["duration_ms"] = value
+            self.assertEqual(validate_document(job, self.job_schema), [], value)
+        job["duration_ms"] = 12000.5
+        errors = validate_document(job, self.job_schema)
+        self.assertTrue(any(item.endswith("duration_ms: type") for item in errors), errors)
+        job["duration_ms"] = True
+        errors = validate_document(job, self.job_schema)
+        self.assertTrue(any(item.endswith("duration_ms: type") for item in errors), errors)
+
 
 if __name__ == "__main__":
     unittest.main()

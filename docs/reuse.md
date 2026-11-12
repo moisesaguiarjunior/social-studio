@@ -12,4 +12,4 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Synthetic swatch | The writer in `probes/phase0/tool/generate_story15_assets.py`, copied. Not extracted. The phase 0 generator is recorded evidence, and this tone is a different length | `probes/phase1/tool/generate_story_assets.py` | `probes/phase1/lib/story_12.dart` |
 | Validate a platform profile, a template, and a render job | `validate_spec.py` | `spec/tool/validate_spec.py` | `spec/tool/test_validate_spec.py`, `check_spec` |
 | Decide whether changed paths need the schema suite | `spec_checks_required` | `tool/hooks/lib.sh` | staged pre-commit and every unpublished pre-push commit |
-| Run the schema suite, and fail if schemas exist without it | `check_spec` | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |
+| Run the schema suite, and fail if schemas exist without it | `check_spec` (isolated stdin) | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |

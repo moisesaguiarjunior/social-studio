@@ -16,7 +16,8 @@ archive and changed paths. A missing regression suite fails closed.
 
 `spec_checks_required` uses the same NUL-delimited paths for `spec/`.
 `check_spec` runs `spec/tool/test_validate_spec.py` from `tool/check.sh` and
-from the hooks when a spec path changes. A snapshot that has `spec/schemas`
+from the hooks when a spec path changes. Its standard input is closed, so the
+suite cannot consume a later pre-push ref. A snapshot that has `spec/schemas`
 and no schema suite fails closed. A tree with no `spec/schemas` does not run
 that suite. The schema cases live in `tool/test_hooks.sh` after the
 hook-regression scenarios counted below. This paragraph does not replace
