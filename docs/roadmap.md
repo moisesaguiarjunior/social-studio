@@ -61,8 +61,8 @@ The maintainer prioritized a usable implementation after validation work.
 backed by canonical `spec/desktop-story` schemas/profile/template. It generates MP4 video,
 a cover, SRT captions, a portable review page and an output manifest using the existing headless renderer. This
 advances the desktop portions of steps 3–4 without adopting the mobile patches.
-Remote media are rejected; broader privacy auditing and native execution remain
-open. The template accepts one photo or an ordered photo sequence, supplied timed
+Remote media are rejected. Desktop privacy checks are recorded under step 2;
+native execution remains open. The template accepts one photo or an ordered photo sequence, supplied timed
 text and a local WAVE track. Per-scene durations produce hard cuts while audio,
 captions and cover retain the global timeline. General template authoring,
 transition effects and sharing are not implemented.
@@ -70,3 +70,16 @@ transition effects and sharing are not implemented.
 The capture draft now also checks interleaved application frames and cleanup
 following a deliberately failed capture. These are controlled desktop engine
 checks; native event delivery, interruptions and hardware encoding remain open.
+
+## Step 2 progress — desktop privacy checks
+
+Desktop jobs reject remote image, video, audio, font and transcript references,
+including redirect URLs, before a file or a socket is opened. The existing
+Fluvie resolver, configured with an empty network allowlist, reports an
+intentional network fetch before any request. Encoded output is checked with
+synthetic location and device tags: those tags remain visible when metadata
+copying is left on, and they are absent when the desktop encode disables that
+copying.
+
+`docs/verification/privacy.md` lists the native paths these desktop checks do
+not observe. The phase 0 network row is unchanged. This is not phone acceptance.

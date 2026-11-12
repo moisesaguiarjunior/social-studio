@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:json_schema/json_schema.dart';
@@ -308,13 +309,27 @@ String string(Map<String, Object?> data, String key) {
   throw StoryJobException('Expected string $key.');
 }
 
-String _localFile(String value, String base) {
+/// Rejects a remote or redirecting reference before any file or socket access.
+///
+/// Relative and absolute local paths return normally. This does not open them.
+/// Image, video and audio jobs, font reads and transcript paths share it.
+void rejectRemoteReference(String value) {
   final uri = Uri.tryParse(value);
-  if (uri == null ||
-      uri.hasScheme ||
-      uri.hasAuthority ||
-      p.isAbsolute(value) ||
-      value.contains('\\')) {
+  if (uri != null && !uri.hasScheme && !uri.hasAuthority) return;
+  throw const StoryJobException(
+    'Media must use relative local paths, not URLs or absolute paths.',
+  );
+}
+
+/// Reads a local font after [rejectRemoteReference] has allowed [path].
+Future<Uint8List> readLocalFont(String path) async {
+  rejectRemoteReference(path);
+  return File(path).readAsBytes();
+}
+
+String _localFile(String value, String base) {
+  rejectRemoteReference(value);
+  if (p.isAbsolute(value) || value.contains('\\')) {
     throw const StoryJobException(
       'Media must use relative local paths, not URLs or absolute paths.',
     );

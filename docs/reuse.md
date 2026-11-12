@@ -13,6 +13,9 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Validate a platform profile, a template, and a render job | `validate_spec.py` | `spec/tool/validate_spec.py` | `spec/tool/test_validate_spec.py`, `check_spec` |
 | Decide whether changed paths need the schema suite | `spec_checks_required` | `tool/hooks/lib.sh` | staged pre-commit and every unpublished pre-push commit |
 | Run the schema suite, and fail if schemas exist without it | `check_spec` (isolated stdin) | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |
+| Reject remote image, video, audio, font and transcript references before access | `rejectRemoteReference`, shared by job loading, font reading and caption compilation | `flutter/social_studio/lib/src/story_job.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
+| Detect an intentional network fetch | Fluvie `NetworkAllowlist` with no hosts, applied by `resolverScope` | `flutter/social_studio/tool/capture_story.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
+| Strip copied location and device metadata | `storyDiscardedMetadataArguments` on the desktop encode and cover commands | `flutter/social_studio/lib/src/story_encode.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
 
 | Visual regression for the phase 0 scene | Flutter `matchesGoldenFile` against the existing reviewed PNGs; no second image comparator | `probes/phase0/test/determinism_test.dart` | Frames 0 and 59 in the determinism probe |
 | Read encoded presentation times | `frame_pts_ms` and `frame_spacing_ms` over FFmpeg metadata | `probes/phase1/tool/inspect_story.py` | Flash, tone and observed frame spacing |

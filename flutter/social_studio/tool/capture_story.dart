@@ -13,14 +13,12 @@ Future<void> main() async {
   final spec = _environment('SOCIAL_STUDIO_SPEC');
   final output = Directory(_environment('SOCIAL_STUDIO_FRAMES'));
   final job = StoryJob.load(jobPath, specDirectory: spec);
-  final font = File(
+  final fontBytes = await readLocalFont(
     Platform.environment['SOCIAL_STUDIO_FONT'] ??
         p.join(spec, '../../probes/phase0/assets/Roboto-Regular.ttf'),
   );
   final loader = FontLoader('Roboto')
-    ..addFont(
-      Future<ByteData>.value(ByteData.sublistView(await font.readAsBytes())),
-    );
+    ..addFont(Future<ByteData>.value(ByteData.sublistView(fontBytes)));
   await loader.load();
   final transcript = File(p.join(output.path, 'captions.srt'));
   await transcript.writeAsString(job.toSrt());

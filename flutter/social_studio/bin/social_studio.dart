@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:social_studio/src/story_encode.dart';
 import 'package:social_studio/src/story_job.dart';
 import 'package:social_studio/src/story_review.dart';
 
@@ -81,65 +82,28 @@ Future<void> main(List<String> args) async {
       if (await File(raw).length() != expected) {
         throw StateError('Capture frame count does not match the job.');
       }
-      await _run(ffmpeg, [
-        '-hide_banner',
-        '-loglevel',
-        'error',
-        '-nostdin',
-        '-f',
-        'rawvideo',
-        '-pixel_format',
-        'rgba',
-        '-video_size',
-        '${width}x$height',
-        '-framerate',
-        '$fps',
-        '-i',
-        raw,
-        '-protocol_whitelist',
-        'file,pipe',
-        '-i',
-        job.audioPath,
-        '-map',
-        '0:v:0',
-        '-map',
-        '1:a:0',
-        '-map_metadata',
-        '-1',
-        '-map_chapters',
-        '-1',
-        '-c:v',
-        'libx264',
-        '-pix_fmt',
-        'yuv420p',
-        '-c:a',
-        'aac',
-        '-af',
-        'apad',
-        '-t',
-        '${job.durationMs / 1000}',
-        '-movflags',
-        '+faststart',
-        p.join(staging.path, 'story.mp4'),
-      ]);
+      final videoPath = p.join(staging.path, 'story.mp4');
+      await _run(
+        ffmpeg,
+        storyVideoArguments(
+          width: width,
+          height: height,
+          fps: fps,
+          rawFrames: raw,
+          audioPath: job.audioPath,
+          durationMs: job.durationMs,
+          outputPath: videoPath,
+        ),
+      );
       final coverFrame = job.coverMs * fps ~/ 1000;
-      await _run(ffmpeg, [
-        '-hide_banner',
-        '-loglevel',
-        'error',
-        '-nostdin',
-        '-i',
-        p.join(staging.path, 'story.mp4'),
-        '-vf',
-        'select=eq(n\\,$coverFrame)',
-        '-frames:v',
-        '1',
-        '-map_metadata',
-        '-1',
-        '-update',
-        '1',
-        p.join(staging.path, 'cover.png'),
-      ]);
+      await _run(
+        ffmpeg,
+        storyCoverArguments(
+          videoPath: videoPath,
+          coverFrame: coverFrame,
+          outputPath: p.join(staging.path, 'cover.png'),
+        ),
+      );
       if (!File(p.join(staging.path, 'cover.png')).existsSync()) {
         throw StateError('No cover frame produced.');
       }

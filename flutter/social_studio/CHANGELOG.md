@@ -8,3 +8,4 @@
 - Keep captions, audio and cover on the global timeline across hard cuts.
 - Export a local review page with scene/caption navigation and separate SRT captions.
 - Freeze validated render jobs for capture so concurrent source JSON edits cannot split video, review and subtitles.
+- Reject remote font and transcript paths before access, detect an intentional network fetch, and check that synthetic location and device tags are absent from encoded output.

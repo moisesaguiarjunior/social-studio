@@ -80,7 +80,8 @@ scene. The existing single-image JSON remains supported.
 
 `example/story.json` shows the complete job. Image and audio paths are relative
 to that JSON file. PNG/JPEG and RIFF/WAVE inputs are supported. Remote URLs,
-absolute paths, missing files and other signatures are rejected. The validation
+absolute paths, missing files and other signatures are rejected. A remote font
+path and a remote transcript path are rejected before those files are opened. The validation
 command checks the contract and signatures; full decoding occurs during render.
 Captions are supplied text with start/end milliseconds, ordered without overlap.
 Boundaries use Fluvie 0.3.1's `round((milliseconds / 1000) * fps)` conversion,
@@ -106,8 +107,10 @@ and audio streams with metadata/chapter copying disabled.
 This is a checkout-based desktop developer tool, not a published SDK or an
 on-device renderer. It reuses the existing local Roboto fixture and license.
 The capture harness runs `flutter test --no-pub`, suppresses Flutter analytics
-and configures Fluvie's media allowlist with no permitted hosts. The encoder
-accepts only file/pipe protocols for the local audio input. These controls are
+and configures Fluvie's media allowlist with no permitted hosts. Tests detect
+an intentional image, video, audio or redirect fetch before a connection.
+The encoder accepts only file/pipe protocols for the local audio input.
+Synthetic location and device tags are checked on the decoded output. These controls are
 for this fixed job path; there is no OS-level sandbox for arbitrary code,
 network filesystems or native plugins. Forced termination may leave temporary
 files; ordinary capture/encode failures clean staging and expose no final output.
