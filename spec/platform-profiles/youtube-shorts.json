@@ -1,0 +1,88 @@
+{
+  "schema_version": "0",
+  "id": "youtube-shorts",
+  "paths": [
+    {
+      "id": "upload",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "aspect_class",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/12779649?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": "square_or_vertical",
+          "text": "Square or vertical."
+        },
+        {
+          "id": "minimum_duration_seconds",
+          "status": "not_published",
+          "source": "https://support.google.com/youtube/answer/15424877?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "maximum_duration_seconds",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/15424877?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 180,
+          "unit": "seconds",
+          "text": "Up to 3 minutes. The YouTube upload ceiling of 12 hours or 256 GB is not a second, longer Shorts maximum."
+        },
+        {
+          "id": "maximum_file_size",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/71673?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 256,
+          "unit": "GB",
+          "text": "Not published as a Shorts-only size. The YouTube upload limit is 256 GB or 12 hours, whichever is less. v0 does not convert GB to bytes."
+        },
+        {
+          "id": "video_codecs",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": [
+            "h264"
+          ],
+          "text": "Shorts do not publish a separate codec. H.264 is the encoding-page recommendation, not a reject limit."
+        },
+        {
+          "id": "encoding",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "Container, profile, pixel format, color, frame rate, and audio are not published as a Shorts-only spec. The encoding-page recommendations are on youtube-horizontal. They are not reject limits."
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://support.google.com/youtube/answer/15424877?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/12779649?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Upload through the YouTube app or YouTube Studio. A third-party share-intent file table is not published. There is no separate publishing API in these pages."
+        }
+      ]
+    }
+  ]
+}

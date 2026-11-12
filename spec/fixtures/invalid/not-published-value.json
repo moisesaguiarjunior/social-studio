@@ -1,0 +1,20 @@
+{
+  "schema_version": "0",
+  "id": "not-published-value",
+  "paths": [
+    {
+      "id": "share_hand_off",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "value": 250,
+          "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-stories",
+          "source_updated": "2026-06-30",
+          "checked_on": "2026-11-11"
+        }
+      ]
+    }
+  ]
+}

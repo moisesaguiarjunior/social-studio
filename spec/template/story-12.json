@@ -1,0 +1,123 @@
+{
+  "schema_version": "0",
+  "id": "story-12",
+  "cover_at_ms": 3000,
+  "slots": [
+    {
+      "id": "photo[0]",
+      "kind": "image",
+      "required": true
+    },
+    {
+      "id": "voice",
+      "kind": "audio",
+      "required": true
+    },
+    {
+      "id": "quote",
+      "kind": "text",
+      "required": false
+    }
+  ],
+  "brand_tokens": {
+    "colors": [
+      {
+        "id": "lead_in",
+        "value": "#101010"
+      },
+      {
+        "id": "flash",
+        "value": "#FFFFFF"
+      },
+      {
+        "id": "scene",
+        "value": "#224466"
+      }
+    ],
+    "fonts": [],
+    "logo": null
+  },
+  "motion_presets": [
+    {
+      "id": "slow-scale",
+      "kind": "slow-scale",
+      "zoom": 1.08
+    }
+  ],
+  "caption_style": {
+    "id": "subtitle"
+  },
+  "layers": [
+    {
+      "id": "lead-in",
+      "kind": "shape",
+      "start_ms": 0,
+      "duration_ms": 1000,
+      "color": "lead_in"
+    },
+    {
+      "id": "flash",
+      "kind": "shape",
+      "start_ms": 1000,
+      "duration_ms": 200,
+      "color": "flash"
+    },
+    {
+      "id": "photo",
+      "kind": "image",
+      "start_ms": 1200,
+      "duration_ms": 10800,
+      "slot": "photo[0]",
+      "color": "scene",
+      "motion": "slow-scale",
+      "fit": "cover"
+    },
+    {
+      "id": "voice",
+      "kind": "audio",
+      "start_ms": 1000,
+      "slot": "voice"
+    },
+    {
+      "id": "captions",
+      "kind": "captions",
+      "start_ms": 0,
+      "style": "subtitle",
+      "cues": [
+        {
+          "start_ms": 2000,
+          "end_ms": 6000,
+          "text": "A synthetic caption"
+        },
+        {
+          "start_ms": 6000,
+          "end_ms": 11000,
+          "text": "from a supplied transcript"
+        }
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "profile_id": "instagram-story",
+      "path_id": "share_hand_off",
+      "canvas": {
+        "width": 1080,
+        "height": 1920,
+        "frame_rate": 30
+      },
+      "note": "Repository canvas for the phase 1 Story. The share page says videos can be 1080p and does not define that pixel size. 720×1280 is the published Android minimum on the background-asset cell, not this canvas. This layout names no surface, so an Android job and an iOS job share it. The repository phase 1 window of 10–15 seconds is not a limit in the profile."
+    },
+    {
+      "profile_id": "instagram-feed",
+      "path_id": "share_hand_off_video",
+      "surface_id": "android",
+      "canvas": {
+        "width": 1080,
+        "height": 1350,
+        "frame_rate": 30
+      },
+      "note": "Repository canvas, 4:5. The Android share table publishes a 640×640 minimum and does not publish this ratio. The publishing API image range of 4:5 to 1.91:1 is a different path and is not applied here."
+    }
+  ]
+}

@@ -301,6 +301,74 @@ PATH="$work/stdin-tools:$PATH" push "$ref
 refs/heads/feature $(git rev-parse HEAD) refs/heads/main $base"
 expect reject "a suite cannot consume a later prohibited push ref" $?
 
+# Schema gates. The clean CI case above has no spec/schemas, so it does not
+# run the schema suite. These cases copy the real spec into this disposable
+# repository. They push only to its local bare remotes.
+printf '#!/usr/bin/env bash\nexit 0\n' >tool/test_hooks.sh
+git checkout -q feature
+git reset -q --hard "$tip"
+studio="$(cd "$src/.." && pwd)"
+copy_spec() {
+  rm -rf spec
+  python3 - "$studio/spec" spec <<'PY'
+import shutil
+import sys
+
+shutil.copytree(
+    sys.argv[1],
+    sys.argv[2],
+    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+)
+PY
+}
+
+copy_spec
+git add spec
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect pass "pre-commit runs schema tests for a staged spec change" $?
+
+printf 'import sys\nraise SystemExit(1)\n' >spec/tool/test_validate_spec.py
+git add spec/tool/test_validate_spec.py
+cp "$studio/spec/tool/test_validate_spec.py" spec/tool/test_validate_spec.py
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "pre-commit checks the staged spec, not the working tree" $?
+
+git reset -q --hard "$tip"
+copy_spec
+git add spec
+# The file is new in this fixture commit, so removal needs --force.
+git rm -q -f spec/tool/test_validate_spec.py
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "deleting the schema suite fails closed" $?
+
+# The failing suite is already on this fixture destination. Only the unusual
+# path is new, so a missed name match would skip the suite and accept the push.
+git reset -q --hard "$tip"
+copy_spec
+printf 'import sys\nraise SystemExit(1)\n' >spec/tool/test_validate_spec.py
+git add spec
+raw_commit -m "fixture: failing schema suite"
+bad_spec="$(git rev-parse HEAD)"
+git init -q --bare ../spec-path-origin.git
+git -c core.hooksPath=/dev/null push -q ../spec-path-origin.git "$bad_spec:refs/heads/base"
+printf 'schema\n' >$'spec/newline\nname.json'
+git add -- $'spec/newline\nname.json'
+bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "pre-commit detects an unusual spec path" $?
+raw_commit -m "fixture: unusual spec path"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+push "refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero" spec-path-origin
+expect reject "pre-push detects an unusual spec path" $?
+
+git reset -q --hard "$tip"
+printf '#!/usr/bin/env bash\nexit 0\n' >tool/test_hooks.sh
+copy_spec
+bash tool/check.sh >/dev/null 2>&1
+expect pass "the CI entry point runs schema tests when schemas are present" $?
+rm spec/tool/test_validate_spec.py
+bash tool/check.sh >/dev/null 2>&1
+expect reject "the CI entry point fails closed when the schema suite is missing" $?
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
   exit 1

@@ -1,0 +1,229 @@
+{
+  "schema_version": "0",
+  "id": "youtube-horizontal",
+  "paths": [
+    {
+      "id": "upload",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "containers",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": [
+            "mp4"
+          ],
+          "text": "MP4, no edit lists, moov atom at the front. The encoding page is recommendations, not a list of reject limits."
+        },
+        {
+          "id": "video_codecs",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": [
+            "h264"
+          ],
+          "text": "H.264, progressive scan, High Profile. Not a reject limit."
+        },
+        {
+          "id": "video_profile",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "High Profile. 2 consecutive B frames. Closed GOP of half the frame rate. CABAC. Variable bitrate."
+        },
+        {
+          "id": "pixel_format",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": "4:2:0",
+          "text": "Chroma subsampling 4:2:0. Not a reject limit."
+        },
+        {
+          "id": "color_tags",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "SDR: BT.709 transfer, primaries, and matrix. The page gives H.273 value 1 for each. Not a reject limit."
+        },
+        {
+          "id": "frame_rate",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "Match the recording. Common rates: 24, 25, 30, 48, 50, 60. Other frame rates are also acceptable. Not a reject range."
+        },
+        {
+          "id": "recommended_sdr_bitrate_mbps",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": {
+            "8k": {
+              "standard_frame_rate": "80-160",
+              "high_frame_rate": "120-240"
+            },
+            "2160p": {
+              "standard_frame_rate": "35-45",
+              "high_frame_rate": "53-68"
+            },
+            "1440p": {
+              "standard_frame_rate": "16",
+              "high_frame_rate": "24"
+            },
+            "1080p": {
+              "standard_frame_rate": "8",
+              "high_frame_rate": "12"
+            },
+            "720p": {
+              "standard_frame_rate": "5",
+              "high_frame_rate": "7.5"
+            },
+            "480p": {
+              "standard_frame_rate": "2.5",
+              "high_frame_rate": "4"
+            },
+            "360p": {
+              "standard_frame_rate": "1",
+              "high_frame_rate": "1.5"
+            }
+          },
+          "text": "The encoding page says no bitrate limit is required. These are the recommended SDR ranges it names, standard frame rate then high frame rate."
+        },
+        {
+          "id": "hdr_bitrate",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "1080p HDR is 10 Mbps at standard frame rate and 15 Mbps at high frame rate. 480p and 360p HDR are not supported. The rest of the HDR table stays on the encoding page."
+        },
+        {
+          "id": "audio_codecs",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": [
+            "aac-lc",
+            "opus",
+            "eclipsa"
+          ],
+          "text": "AAC-LC, Opus, or Eclipsa Audio. Stereo, Stereo + 5.1, or Stereo + Eclipsa Audio. The bitrate table also lists Mono. Not a reject limit."
+        },
+        {
+          "id": "audio_sample_rate",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "value": 48,
+          "unit": "kHz",
+          "text": "48 kHz recommended. Not a reject limit."
+        },
+        {
+          "id": "minimum_duration_seconds",
+          "status": "not_published",
+          "source": "https://support.google.com/youtube/answer/71673?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "cover",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/72431?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "Custom thumbnails are a separate upload for a verified account. Videos: 16:9, 3840×2160, minimum width 640. Shorts: 9:16, 2160×3840, minimum height 640. JPG or PNG. File size depends on the device used to upload the thumbnail. Those sizes are not video-frame limits."
+        },
+        {
+          "id": "aspect_ratio",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "16:9 is the standard aspect ratio for YouTube on a computer. The player adapts to other aspect ratios, including vertical and square. A required horizontal reject line is not published."
+        },
+        {
+          "id": "categorization_hint",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/15424877?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "To keep a video from being categorized as a Short, the three-minute Shorts page says to use a wider aspect ratio such as 16:9. That sentence is not a reject line for a vertical file."
+        },
+        {
+          "id": "unverified_default_duration_seconds",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/71673?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "value": 900,
+          "unit": "seconds",
+          "text": "Default upload length is 15 minutes. Verified accounts can upload longer videos. This is not a universal maximum."
+        },
+        {
+          "id": "maximum_duration_seconds",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/71673?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 43200,
+          "unit": "seconds",
+          "text": "12 hours, or 256 GB, whichever is less."
+        },
+        {
+          "id": "maximum_file_size",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/71673?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 256,
+          "unit": "GB",
+          "text": "256 GB or 12 hours, whichever is less. v0 does not convert GB to bytes."
+        },
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://support.google.com/youtube/answer/1722171?hl=en",
+          "source_updated": "not shown",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Upload encoding and the longer-upload page. These pages are not a third-party share intent and not a separate publishing API."
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Local review gate for every commit: format, analysis and tests for each
 # Dart/Flutter package affected by the staged changes (including deletions),
-# run on a snapshot of the index, not on the working tree.
+# and the schema tests when a staged path is under spec/.
+# Checks run on a snapshot of the index, not on the working tree.
 set -euo pipefail
 
 root="$(git rev-parse --show-toplevel)"
@@ -19,6 +20,10 @@ git checkout-index --all --prefix="$snapshot/content/"
 
 if hook_checks_required <"$changed"; then
   check_hook_suite "$snapshot/content" || exit 1
+fi
+if spec_checks_required <"$changed"; then
+  echo "pre-commit: checking spec (staged content)"
+  check_spec "$snapshot/content" || exit 1
 fi
 
 packages="$(

@@ -14,6 +14,14 @@ and staged package lookup, preserving Unicode, quotes and embedded newlines.
 Pre-commit uses an index snapshot; pre-push uses every newly published commit's
 archive and changed paths. A missing regression suite fails closed.
 
+`spec_checks_required` uses the same NUL-delimited paths for `spec/`.
+`check_spec` runs `spec/tool/test_validate_spec.py` from `tool/check.sh` and
+from the hooks when a spec path changes. A snapshot that has `spec/schemas`
+and no schema suite fails closed. A tree with no `spec/schemas` does not run
+that suite. The schema cases live in `tool/test_hooks.sh` after the
+hook-regression scenarios counted below. This paragraph does not replace
+that count, and it does not claim a GitHub run.
+
 `tool/check.sh` checks the current checkout, independent of installed hooks. CI
 calls it with read-only repository permissions, full-revision action pins and
 no event path filters. This is distinct from enforcing branch-protection checks;
