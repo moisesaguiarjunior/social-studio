@@ -30,13 +30,14 @@ unnecessary change even when all checks pass. Existing code can also be wrong:
 compare it with requirements and evidence rather than preserving it blindly.
 Formatting belongs to automation; naming, cohesion, clarity and safe boundaries
 still require engineering judgment. Keep this review proportional to the change.
-When a PR changes a gate and its suite together, inspect removed/weakened assertions and independently challenge
-the gate; passing its own modified suite is insufficient.
+When a PR changes a gate and its suite together, inspect removed or weakened
+assertions and challenge the gate independently; passing its own modified suite
+is insufficient.
 
 ## Code standards
 
-The policy clarifications in this PR are explicit proposals, with rationale and
-limits in [decision 0004](docs/decisions/0004-review-and-test-policy.md).
+The rationale and limits of these standards are recorded in
+[decision 0004](docs/decisions/0004-review-and-test-policy.md).
 
 ### Design
 

@@ -1,6 +1,6 @@
 # 0004 — Review the system and test meaningful contracts
 
-Status: proposed in PR #6; adoption follows maintainer merge.
+Status: accepted by the maintainer on 2026-11-12 (pull request #6).
 
 ## Context
 
@@ -14,7 +14,7 @@ The policy edits accompanying the Quality workflow are a distinct engineering
 proposal, not a technical requirement of CI. They are recorded here so review
 and adoption are explicit rather than hidden in a CI commit.
 
-## Decision proposed
+## Decision
 
 - Review actual callers and canonical implementations before the author's
   explanation. Search for duplicate sources of truth and missing acceptance
