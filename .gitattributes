@@ -1,0 +1,2 @@
+# Unified patches represent empty context lines with one required space.
+probes/phase1/upstream/*.patch whitespace=-blank-at-eol

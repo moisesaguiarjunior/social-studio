@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "template": "story-photo-v1",
+  "image": "../../../probes/phase1/assets/swatch.png",
+  "audio": "../../../probes/phase1/assets/tone.wav",
+  "durationMs": 12000,
+  "coverMs": 3000,
+  "captions": [
+    {
+      "startMs": 1000,
+      "endMs": 5000,
+      "text": "A moment worth keeping"
+    },
+    {
+      "startMs": 6000,
+      "endMs": 11000,
+      "text": "Made locally. Ready to share."
+    }
+  ]
+}

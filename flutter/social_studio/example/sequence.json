@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "template": "story-photo-v1",
+  "scenes": [
+    {
+      "image": "../out/sequence-assets/photo-1.png",
+      "durationMs": 4000
+    },
+    {
+      "image": "../out/sequence-assets/photo-2.png",
+      "durationMs": 4000
+    },
+    {
+      "image": "../out/sequence-assets/photo-3.png",
+      "durationMs": 4000
+    }
+  ],
+  "audio": "../../../probes/phase1/assets/tone.wav",
+  "durationMs": 12000,
+  "coverMs": 5000,
+  "captions": [
+    {
+      "startMs": 500,
+      "endMs": 3500,
+      "text": "Every story starts somewhere."
+    },
+    {
+      "startMs": 3700,
+      "endMs": 7500,
+      "text": "Different moments. One story."
+    },
+    {
+      "startMs": 8500,
+      "endMs": 11500,
+      "text": "Keep what matters."
+    }
+  ]
+}

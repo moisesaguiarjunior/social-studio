@@ -16,6 +16,7 @@ Measurement uses ffprobe's sibling ffmpeg when FLUVIE_FFMPEG is set,
 otherwise ffmpeg on PATH, always as a separate process.
 """
 
+import math
 import os
 import shutil
 import subprocess
@@ -24,7 +25,6 @@ from pathlib import Path
 
 YAVG_THRESHOLD = 200.0
 RMS_THRESHOLD_DB = -50.0
-FPS = 30.0
 # Fixture detector for the synthetic swatch (gold 0xF2C14E), not a
 # general quality score. Counts decoded RGB pixels.
 STILL_MIN = 1000
@@ -51,57 +51,69 @@ def payload(line: str) -> str:
     return line[index + len(marker) :].strip()
 
 
-def first_yavg_ms(text: str, threshold: float, fps: float) -> int | None:
-    """Return the first frame whose average luma reaches [threshold]."""
-    frame: int | None = None
+def frame_pts_ms(body: str) -> float | None:
+    """Read a finite presentation timestamp from a metadata frame header."""
+    for part in body.split():
+        if part.startswith("pts_time:"):
+            try:
+                seconds = float(part.split(":", 1)[1])
+            except ValueError:
+                return None
+            return seconds * 1000 if math.isfinite(seconds) else None
+    return None
+
+
+def first_yavg_ms(text: str, threshold: float) -> int | None:
+    """Return the PTS of the first frame reaching the luma threshold.
+
+    Missing timestamps cannot be reconstructed from the frame index: the
+    encoded cadence may differ from the authored rate or be variable.
+    """
+    pts_ms: float | None = None
     for line in text.splitlines():
         body = payload(line)
         if body.startswith("frame:"):
-            frame = int(body.split()[0].split(":", 1)[1])
+            pts_ms = frame_pts_ms(body)
             continue
-        if frame is None or "signalstats.YAVG=" not in body:
+        if "signalstats.YAVG=" not in body:
             continue
-        value = float(body.split("=", 1)[1])
-        if value >= threshold:
-            return round(frame * 1000 / fps)
+        if float(body.split("=", 1)[1]) >= threshold:
+            return round(pts_ms) if pts_ms is not None else None
     return None
 
 
 def first_rms_ms(text: str, threshold_db: float) -> int | None:
     """Return the start PTS of the first audio frame at [threshold_db]."""
-    pts_ms: int | None = None
+    pts_ms: float | None = None
     for line in text.splitlines():
         body = payload(line)
         if body.startswith("frame:"):
-            pts_ms = None
-            for part in body.split():
-                if part.startswith("pts_time:"):
-                    pts_ms = round(float(part.split(":", 1)[1]) * 1000)
+            pts_ms = frame_pts_ms(body)
             continue
-        if pts_ms is None or "astats.Overall.RMS_level=" not in body:
+        if "astats.Overall.RMS_level=" not in body:
             continue
         raw = body.split("=", 1)[1].strip()
         if raw in {"-inf", "inf", "nan"}:
             continue
         if float(raw) >= threshold_db:
-            return pts_ms
+            return round(pts_ms) if pts_ms is not None else None
     return None
 
 
-def audio_frame_ms(text: str) -> float | None:
-    """Return the first positive audio-frame spacing, in milliseconds."""
+def frame_spacing_ms(text: str) -> float | None:
+    """Return the first positive frame spacing, in milliseconds."""
     times: list[float] = []
     for line in text.splitlines():
         body = payload(line)
         if not body.startswith("frame:"):
             continue
-        for part in body.split():
-            if part.startswith("pts_time:"):
-                times.append(float(part.split(":", 1)[1]))
+        pts_ms = frame_pts_ms(body)
+        if pts_ms is not None:
+            times.append(pts_ms)
     for earlier, later in zip(times, times[1:]):
         delta = later - earlier
         if delta > 0:
-            return round(delta * 1000, 2)
+            return round(delta, 2)
     return None
 
 
@@ -120,7 +132,22 @@ def self_check() -> int:
         "[Parsed_metadata_1 @ 0x1] frame:43   pts:44032   pts_time:1.0\n"
         "[Parsed_metadata_1 @ 0x1] lavfi.astats.Overall.RMS_level=-17.0\n"
     )
-    flash = first_yavg_ms(flash_text, YAVG_THRESHOLD, FPS)
+    flash = first_yavg_ms(flash_text, YAVG_THRESHOLD)
+    # VFR/nonzero origins: frame number is not a timestamp. Never reuse the
+    # preceding frame's timestamp when the bright frame has none.
+    for stamp, expected in [("2.375", 2375), ("-0.5", -500),
+                            ("N/A", None), ("nan", None), ("inf", None)]:
+        log = ("frame:0 pts_time:0\nlavfi.signalstats.YAVG=30\n"
+               f"frame:30 pts_time:{stamp}\nlavfi.signalstats.YAVG=235\n")
+        if first_yavg_ms(log, YAVG_THRESHOLD) != expected:
+            print("self-check video PTS failed", file=sys.stderr)
+            return 1
+    missing = ("frame:0 pts_time:0\nlavfi.signalstats.YAVG=30\n"
+               "frame:30\nlavfi.signalstats.YAVG=235\n"
+               "frame:31 pts_time:2.5\nlavfi.signalstats.YAVG=235\n")
+    if first_yavg_ms(missing, YAVG_THRESHOLD) is not None:
+        print("self-check missing PTS failed", file=sys.stderr)
+        return 1
     tone = first_rms_ms(tone_text, RMS_THRESHOLD_DB)
     if flash != 1000 or tone != 1000 or av_offset_ms(1000, 1000) != 0:
         print(f"self-check failed flash={flash} tone={tone}", file=sys.stderr)
@@ -136,7 +163,7 @@ def self_check() -> int:
     if rounded != 998:
         print(f"self-check rounding failed tone={rounded}", file=sys.stderr)
         return 1
-    spacing = audio_frame_ms(
+    spacing = frame_spacing_ms(
         "[Parsed_metadata_1 @ 0x1] frame:0    pts:0       pts_time:0\n"
         "[Parsed_metadata_1 @ 0x1] frame:1    pts:1024    pts_time:0.0232199546\n"
     )
@@ -387,6 +414,7 @@ def measure_audio(path: Path) -> int:
     audio = run_ffmpeg(
         binary,
         [
+            "-copyts",
             "-i",
             str(path),
             "-vn",
@@ -403,7 +431,7 @@ def measure_audio(path: Path) -> int:
             print(audio.stderr, file=sys.stderr)
         return 1
     tone = first_rms_ms(audio.stderr, RMS_THRESHOLD_DB)
-    spacing = audio_frame_ms(audio.stderr)
+    spacing = frame_spacing_ms(audio.stderr)
     print(f"tone_start_ms {tone if tone is not None else 'absent'}")
     print(f"audio_frame_ms {spacing if spacing is not None else 'absent'}")
     if tone is None or spacing is None:
@@ -447,6 +475,7 @@ def measure(path: Path) -> int:
     video = run_ffmpeg(
         binary,
         [
+            "-copyts",
             "-i",
             str(path),
             "-vf",
@@ -460,6 +489,7 @@ def measure(path: Path) -> int:
     audio = run_ffmpeg(
         binary,
         [
+            "-copyts",
             "-i",
             str(path),
             "-vn",
@@ -478,9 +508,9 @@ def measure(path: Path) -> int:
             print(audio.stderr, file=sys.stderr)
         return 1
     # metadata=print writes to stderr.
-    flash = first_yavg_ms(video.stderr, YAVG_THRESHOLD, FPS)
+    flash = first_yavg_ms(video.stderr, YAVG_THRESHOLD)
     tone = first_rms_ms(audio.stderr, RMS_THRESHOLD_DB)
-    spacing = audio_frame_ms(audio.stderr)
+    spacing = frame_spacing_ms(audio.stderr)
     print(f"flash_start_ms {flash if flash is not None else 'absent'}")
     print(f"tone_start_ms {tone if tone is not None else 'absent'}")
     if flash is None or tone is None or spacing is None:
@@ -488,7 +518,10 @@ def measure(path: Path) -> int:
         return 1
     print(f"av_offset_ms {av_offset_ms(flash, tone)}")
     print(f"audio_frame_ms {spacing}")
-    print("video_frame_ms 33")
+    video_spacing = frame_spacing_ms(video.stderr)
+    print(f"video_frame_ms {video_spacing if video_spacing is not None else 'absent'}")
+    if video_spacing is None:
+        return 1
     stream = print_audio_stream(path)
     pixels = check_pixels(binary, path)
     if stream != 0:

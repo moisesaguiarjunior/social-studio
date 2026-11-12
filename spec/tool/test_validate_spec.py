@@ -1098,5 +1098,45 @@ class RejectLines(SpecTest):
         self.assertTrue(any(item.endswith("duration_ms: type") for item in errors), errors)
 
 
+class DesktopStoryConsistencyTests(unittest.TestCase):
+    def setUp(self):
+        self.profile = load_json(SPEC / "platform-profiles" / "instagram-story.json")
+        self.desktop = load_json(SPEC / "desktop-story" / "story-profile.json")
+        self.rule = find_limit(self.profile, "share_hand_off", None, "maximum_duration_seconds")
+
+    def test_checked_in_desktop_projection_matches_catalog(self):
+        self.assertEqual(validate_spec.desktop_story_limit_errors(self.profile, self.desktop), [])
+
+    def test_either_side_drifting_is_rejected(self):
+        for offset in (-1000, 1000):
+            with self.subTest(offset=offset):
+                desktop = {**self.desktop, "maximumDurationMs": self.desktop["maximumDurationMs"] + offset}
+                self.assertIn("desktop_story duration_limit_mismatch",
+                              validate_spec.desktop_story_limit_errors(self.profile, desktop))
+        self.rule["value"] += 1
+        self.assertTrue(validate_spec.desktop_story_limit_errors(self.profile, self.desktop))
+        self.desktop["maximumDurationMs"] = self.rule["value"] * 1000
+        self.assertEqual(validate_spec.desktop_story_limit_errors(self.profile, self.desktop), [])
+
+    def test_missing_or_reclassified_canonical_rule_is_rejected(self):
+        for key, value in (("status", "not_published"), ("binding", "recommended"),
+                           ("unit", "milliseconds"), ("value", True), ("id", "other")):
+            with self.subTest(key=key):
+                original = self.rule[key]
+                self.rule[key] = value
+                self.assertTrue(validate_spec.desktop_story_limit_errors(self.profile, self.desktop))
+                self.rule[key] = original
+        self.profile["paths"] = []
+        self.assertTrue(validate_spec.desktop_story_limit_errors(self.profile, self.desktop))
+
+    def test_noninteger_projection_and_wrong_profile_are_rejected(self):
+        for value in (True, None, "20000", 20000.5):
+            with self.subTest(value=value):
+                self.assertTrue(validate_spec.desktop_story_limit_errors(
+                    self.profile, {**self.desktop, "maximumDurationMs": value}))
+        self.assertTrue(validate_spec.desktop_story_limit_errors(
+            self.profile, {**self.desktop, "id": "instagram-reel"}))
+
+
 if __name__ == "__main__":
     unittest.main()

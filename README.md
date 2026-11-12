@@ -2,7 +2,27 @@
 
 Turn app content into **finished, ready-to-post social media pieces with art direction**: Instagram Stories and feed posts, Reels, TikTok, YouTube Shorts and horizontal YouTube videos.
 
-Status: evaluation and synthetic probes; no distributed renderer yet. The phase 0 recommendation is conditional (see `docs/evaluation.md`). Schema v0 and its validation tests are in `spec/`. Technical choices below remain subject to that evidence.
+Status: an initial [desktop Story workflow](flutter/social_studio/README.md) now
+renders a local JSON job to MP4, a cover and a local review page. It is checkout-based and unpublished;
+mobile adoption remains conditional (see `docs/evaluation.md`). Schema v0 and
+its catalog checks remain in `spec/`; this desktop tool consumes the narrower
+Story job contract documented in `spec/desktop-story/`.
+
+## Try the first Story workflow
+
+```sh
+python3 probes/phase1/tool/generate_story_assets.py
+cd flutter/social_studio
+flutter pub get --enforce-lockfile
+dart run bin/social_studio.dart render example/story.json out/my-story
+```
+
+Requires a local Flutter SDK and FFmpeg with libx264/AAC. The output directory
+must be new. The example uses synthetic content; replace the relative image,
+audio and timed caption fields in the JSON to render authorized local content.
+For several photos with individual durations, use the
+[sequence example](flutter/social_studio/README.md#render-a-sequence-of-photos).
+See [inputs, validation and limitations](flutter/social_studio/README.md).
 
 ## Goals
 
@@ -87,7 +107,11 @@ One Instagram Story, 9:16, 10–15 s: one photo with slow motion, a recorded voi
 
 JSON Schemas for platform profiles, templates and render jobs (with validation tests); Flutter renderer for Story/Reel/TikTok/Shorts (9:16), feed (4:5, 1:1) and YouTube (16:9); share helpers (Instagram Stories intent, system share sheet); first conformance jobs.
 
-Schema v0 and its validation tests are in `spec/`. The renderer, the share helpers, and the conformance frames are not implemented.
+Schema v0 and its validation tests are in `spec/`. Share helpers and general
+v0 catalog rendering remain unimplemented.
+
+See [the execution roadmap](docs/roadmap.md) for the ordered desktop work,
+implemented milestones and the remaining device acceptance gate.
 
 ## Consumers
 

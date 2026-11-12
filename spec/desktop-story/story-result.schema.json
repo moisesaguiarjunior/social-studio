@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Social Studio desktop export result format 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "video",
+    "cover",
+    "captions",
+    "review",
+    "width",
+    "height",
+    "fps",
+    "durationMs"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "video": {
+      "const": "story.mp4"
+    },
+    "cover": {
+      "const": "cover.png"
+    },
+    "captions": {
+      "const": "captions.srt"
+    },
+    "review": {
+      "const": "review.html"
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "fps": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "description": "Relative artifacts within one completed export directory. A review page plays the encoded MP4; it does not render the job. Captions retain authored SRT times. Dimensions and timing describe the encoded output."
+}

@@ -13,3 +13,17 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Validate a platform profile, a template, and a render job | `validate_spec.py` | `spec/tool/validate_spec.py` | `spec/tool/test_validate_spec.py`, `check_spec` |
 | Decide whether changed paths need the schema suite | `spec_checks_required` | `tool/hooks/lib.sh` | staged pre-commit and every unpublished pre-push commit |
 | Run the schema suite, and fail if schemas exist without it | `check_spec` (isolated stdin) | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |
+
+| Visual regression for the phase 0 scene | Flutter `matchesGoldenFile` against the existing reviewed PNGs; no second image comparator | `probes/phase0/test/determinism_test.dart` | Frames 0 and 59 in the determinism probe |
+| Read encoded presentation times | `frame_pts_ms` and `frame_spacing_ms` over FFmpeg metadata | `probes/phase1/tool/inspect_story.py` | Flash, tone and observed frame spacing |
+| Validate draft upstream capture fixes | Disposable package copies plus baseline/patched assertions | `probes/phase1/tool/check_upstream_capture.py` | `probes/phase1/test/upstream_patch_test.dart` |
+| Validate local Story jobs | Synchronous `json_schema` plus semantic time/file checks | `flutter/social_studio/lib/src/story_job.dart`, `spec/desktop-story/` | Desktop CLI and composition compiler |
+| Compile a photo Story or sequence | `buildStory` over existing Fluvie widgets | `flutter/social_studio/lib/src/story_composition.dart` | `tool/capture_story.dart` in the package |
+| Capture desktop frames | Fluvie `renderVideo` and the existing Roboto fixture | `flutter/social_studio/tool/capture_story.dart` | Desktop render command |
+| Order photo scenes | Fluvie `Scene` and `Video` offsets, with exact frame durations and default hard cuts | `flutter/social_studio/lib/src/story_composition.dart` | `example/sequence.json` and the real-renderer sequence test |
+| Generate synthetic sequence media | Existing phase 1 audio generator and PNG chunk writer | `flutter/social_studio/tool/generate_sequence_assets.py` | Desktop sequence example |
+| Review an exported Story | Native HTML video controls, normalized job timing and escaped caption text | `flutter/social_studio/lib/src/story_review.dart`, `assets/review.html` | Desktop export `review.html` |
+| Export supplied subtitles | `StoryJob.toSrt()` | `flutter/social_studio/lib/src/story_job.dart` | Capture parser and export `captions.srt` |
+| Freeze validated render input | `StoryJob.writeSnapshot` with rebased media references and validated configuration | `flutter/social_studio/lib/src/story_job.dart` | Desktop CLI capture subprocess |
+| Detect changed render media | Existing `crypto` SHA-256 in bounded chunks, retained by validated `StoryJob` | `flutter/social_studio/lib/src/story_job.dart` | CLI before capture and final directory rename |
+| Check desktop platform projections | `desktop_story_limit_errors`, reusing the v0 duration conversion | `spec/tool/validate_spec.py` | Schema suite invoked by repository and staged spec checks |

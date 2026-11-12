@@ -48,4 +48,34 @@ The cover time, the colors, the slow scale, and the two caption cues are the fix
 
 ## What is not here
 
-A renderer, share helpers, and conformance frames are later work. `spec/conformance/` does not exist yet.
+General v0 catalog rendering, share helpers and conformance frames are later work. `spec/conformance/` does not exist yet.
+
+## Desktop Story contract
+
+`desktop-story/` defines the first usable local Story job, its profile and its template.
+Each JSON document has a Draft 7 schema. `story-result.schema.json` describes
+the desktop export manifest and its relative output artifacts. `flutter/social_studio` is the first
+consumer and loads these files directly; there is no generated Dart copy.
+
+Jobs contain either one image or an ordered photo scene list, relative local
+media paths and timed caption text. Scenes have whole-frame durations that
+sum to the job duration; captions and cover use global time. Schemas
+own structural rules. Cue ordering, containment, frame-aligned duration and
+local-file validation are semantic requirements described in the job schema
+and enforced by the consumer. Unknown keys and unsupported versions fail.
+
+Profile values cite official requirements or explicitly identify authoring
+choices. Template colors are #RRGGBB or #AARRGGBB. Design insets are not official
+platform safe zones. This initial contract does not claim general template
+composition, phone conformance, or all platform formats from the roadmap.
+
+The desktop contract predates integration with the v0 catalog and has its own
+explicitly selected schema set. It does not consume or migrate `schemas/v0`,
+claim support for v0 templates, or replace their validation. The two formats
+must not be passed to each other. Catalog-to-renderer integration remains open;
+see decision 0005 for the desktop scope.
+
+`desktop-story` is not schema v1: numbered catalog versions remain reserved by
+decision 0003. The platform catalog is authoritative; the schema test suite
+compares the desktop duration projection to its Story share rule. See decision
+0005 for the adapter and migration plan that will converge the two entry formats.

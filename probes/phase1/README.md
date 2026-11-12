@@ -51,7 +51,12 @@ python3 tool/inspect_story.py out/story12.mp4
 
 `tool/inspect_story.py` reuses `probes/phase0/tool/inspect_story15.py` for
 the container reading, then measures the flash-to-tone offset in
-milliseconds. A positive offset means the tone is later than the white
+milliseconds. Both detections use the encoded `pts_time`, preserving the
+input timeline with `-copyts`; the flash is not inferred from a 30 fps assumption.
+A missing or non-finite timestamp on the first detected flash/tone fails the
+measurement. `video_frame_ms` and `audio_frame_ms` report the first observed
+positive timestamp spacing, not a fixed cadence or a VFR-wide tolerance.
+A positive offset means the tone is later than the white
 flash. The tone time is the start PTS of the first audio frame whose
 overall RMS reaches −50 dB. The script prints that frame's measured
 spacing. It does not treat `astats`'s `length=0.02` as the window.
@@ -107,3 +112,10 @@ until phones are available.
 
 The Lottie clock and iOS in-composition video clips stay out of scope.
 `docs/evaluation.md` records both.
+
+## Draft upstream fixes
+
+`upstream/` contains local patch candidates and a desktop capture reproducer.
+The regular test suite checks baseline rejection and patched success in
+isolated copies; it never edits the installed package cache or adopts the
+patches for the Android integration test. See [the patch notes](upstream/README.md).

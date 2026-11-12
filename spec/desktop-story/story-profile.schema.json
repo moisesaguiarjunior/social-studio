@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "width",
+    "height",
+    "fps",
+    "maximumDurationMs",
+    "source",
+    "notes"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "const": "instagram-story"
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3840,
+      "multipleOf": 2
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3840,
+      "multipleOf": 2
+    },
+    "fps": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60
+    },
+    "maximumDurationMs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

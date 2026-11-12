@@ -17,7 +17,12 @@ FFPROBE=not-a-real-probe flutter test test/inspect_story15_test.dart --plain-nam
 
 `PHASE0_EVIDENCE` may point at a directory. The determinism test then writes
 `frame0.png`, `frame59.png`, and `sha256.txt` there. The copies under
-`evidence/` are from the run recorded in the evaluation.
+`evidence/` are from the run recorded in the evaluation. The test now also
+compares captured frames 0 and 59 with those existing PNGs through Flutter's
+`matchesGoldenFile`. Two identical runs alone cannot catch a consistently
+wrong scene. References must not be regenerated to accommodate failures.
+These references cover the pinned headless test path; cross-platform and
+on-device visual equivalence still need separate evidence.
 
 The 15-second encode used the published `fluvie_cli` 0.3.1. The scene is
 `lib/story_15.dart`. The timed run kept that scene in a throwaway directory
