@@ -20,8 +20,8 @@ bound for the entire file. The old historical measurement records are retained.
 
 ## Visual regression
 
-The existing determinism test still compares the complete buffers of two fresh
-captures. It now additionally uses Flutter's `matchesGoldenFile` for frames
+At the original `00d4f56` review, the determinism test compared the complete buffers of two fresh
+captures. It additionally used Flutter's `matchesGoldenFile` for frames
 0 and 59 against the existing PNGs. No golden or stored frame hash was changed.
 The unchanged scene passes both comparisons. A disposable-copy mutation from
 `Ag Á` to `WRONG` passed the former repeatability test; the same mutation must
@@ -55,3 +55,18 @@ were rejected. A separate rectangle-color mutation retained repeatability but
 failed both goldens (22,540 and 22,701 differing pixels). The reviewer inspected
 canonical dependency callers, confirmed the roadmap limits, checked changed
 content for machine identifiers, and removed its disposable files.
+
+## Linux CI correction proposed after PR #10
+
+The first CI run of PR #10 found that the two historical phase 0 PNGs were
+rendered on macOS and did not exactly match Linux text rasterization. The
+follow-up keeps `probes/phase0/evidence/` intact, moves the executable visual
+comparison into a separate `golden`-tagged test, and gives that test dedicated
+Linux references under `probes/phase0/test/goldens/`. The full-buffer
+repeatability check stays untagged and runs everywhere. The repository gate
+announces the visual skip outside Linux; CI uses Ubuntu 24.04 and the pinned
+Flutter SDK. No pixel tolerance is introduced. The Linux comparison passed
+with the unchanged scene. In a disposable copy, changing `Ag Á` to `WRONG`
+made both references fail (5,641 differing pixels each). This proves the new
+gate detects a repeatably wrong scene. The GitHub CI result still needs to
+be checked against the follow-up commit before merge.

@@ -171,23 +171,6 @@ Future<void> main() async {
     final frame59 = first.sublist(59 * frameBytes, 60 * frameBytes);
     expect(frame0, isNot(equals(frame59)), reason: 'the rectangle should move');
 
-    // Reuse the reviewed reference frames; repeatability alone accepts a
-    // consistently wrong scene. Never update these to accommodate a failure.
-    for (final frame in [0, 59]) {
-      final image = await tester.runAsync(() => _frameImage(first, frame));
-      if (image == null) {
-        throw StateError('Could not decode frame $frame.');
-      }
-      try {
-        await expectLater(
-          image,
-          matchesGoldenFile('../evidence/frame$frame.png'),
-        );
-      } finally {
-        image.dispose();
-      }
-    }
-
     final evidence = Platform.environment['PHASE0_EVIDENCE'];
     if (evidence != null && evidence.isNotEmpty) {
       await tester.runAsync(() async {
@@ -199,4 +182,27 @@ Future<void> main() async {
       });
     }
   }, timeout: const Timeout(Duration(minutes: 10)));
+
+  testWidgets(
+    'reference frames match the Linux rendering',
+    (tester) async {
+      final frames = await _capture(tester, determinismVideo());
+      for (final frame in [0, 59]) {
+        final image = await tester.runAsync(() => _frameImage(frames, frame));
+        if (image == null) {
+          throw StateError('Could not decode frame $frame.');
+        }
+        try {
+          await expectLater(
+            image,
+            matchesGoldenFile('goldens/frame$frame.png'),
+          );
+        } finally {
+          image.dispose();
+        }
+      }
+    },
+    tags: 'golden',
+    timeout: const Timeout(Duration(minutes: 10)),
+  );
 }

@@ -4,7 +4,7 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 
 | Need | Use | Where | Example consumer |
 | --- | --- | --- | --- |
-| Package format, strict analysis and tests | `check_package` (isolated stdin) | `tool/hooks/lib.sh` | pre-commit, pre-push, `tool/check.sh` |
+| Package format, strict analysis and tests; Linux-only exact visual references with an explicit skip elsewhere | `check_package` (isolated stdin) | `tool/hooks/lib.sh` | pre-commit, pre-push, `tool/check.sh` |
 | Decide whether changed paths affect the hook/CI gates | `hook_checks_required` | `tool/hooks/lib.sh` | staged pre-commit and every unpublished pre-push commit |
 | Run the hook regression gate in an isolated Git environment | `check_hook_suite` (isolated stdin) | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |
 | Full checkout checks without depending on installed hooks | `bash tool/check.sh` | `tool/check.sh` | Quality workflow, local verification |
