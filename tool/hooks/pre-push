@@ -66,6 +66,10 @@ while read -r _local_ref local_sha remote_ref _remote_sha; do
       echo "pre-push: checking hook regressions at ${commit:0:7}"
       check_hook_suite "$snapshot" || status=1
     fi
+    if spec_checks_required <"$changed"; then
+      echo "pre-push: checking spec at ${commit:0:7}"
+      check_spec "$snapshot" || status=1
+    fi
     rm -f "$changed"
     while IFS= read -r pkg; do
       [ -n "$pkg" ] || continue

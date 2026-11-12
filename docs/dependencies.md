@@ -127,3 +127,7 @@ Packages in the phase 1 lock that the phase 0 lock does not have:
 None of those is GPL. The headless encode did not download a new FFmpeg archive. It ran a local binary as a separate process, as in `docs/decisions/0002-ffmpeg-in-developer-tools.md`.
 
 The phase 1 inspector tests also run `ffmpeg` as a separate process and fail when it is missing. The GitHub-hosted Ubuntu 24.04 runner image does not list it. The image readme for `ubuntu24/20260810.271` in `actions/runner-images` (installed software and the apt package table, read 2026-11-11) has no `ffmpeg` entry: <https://github.com/actions/runner-images/blob/ubuntu24/20260810.271/images/ubuntu/Ubuntu2404-Readme.md>. `.github/workflows/quality.yml` installs the distro `ffmpeg` package with `apt-get`, then runs `bash tool/check.sh`. That install is a developer-tool process under the decision above. It is not the pinned BtbN archive, and it is not shipped in an app.
+
+## Schema checker
+
+`spec/tool/validate_spec.py` checks schema v0. It uses the Python 3 standard library only (3.9 or newer). No package was added, and the checker does not download a JSON Schema implementation. See `docs/decisions/0003-schema-versioning.md`.

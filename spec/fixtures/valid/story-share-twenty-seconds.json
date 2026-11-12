@@ -1,0 +1,19 @@
+{
+  "schema_version": "0",
+  "id": "story-share-twenty-seconds",
+  "template_id": "story-12",
+  "profile_id": "instagram-story",
+  "path_id": "share_hand_off",
+  "surface_id": "android",
+  "duration_ms": 20000,
+  "video_codec": "h264",
+  "data": {
+    "photo[0]": {
+      "asset_id": "synthetic-swatch"
+    },
+    "voice": {
+      "asset_id": "synthetic-tone",
+      "at_ms": 1000
+    }
+  }
+}

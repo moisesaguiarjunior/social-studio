@@ -1,0 +1,585 @@
+{
+  "schema_version": "0",
+  "id": "instagram-feed",
+  "paths": [
+    {
+      "id": "share_hand_off_image",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "color_tags",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+          "source_updated": "2026-06-30",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+          "source_updated": "2026-06-30",
+          "checked_on": "2026-11-11"
+        }
+      ],
+      "surfaces": [
+        {
+          "id": "android",
+          "limits": [
+            {
+              "id": "accepted_formats",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": [
+                "jpeg",
+                "gif",
+                "png"
+              ],
+              "text": "JPEG, GIF, or PNG in the Android shareable-content table."
+            },
+            {
+              "id": "minimum_width",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "minimum_height",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "maximum_file_size",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            }
+          ]
+        },
+        {
+          "id": "ios",
+          "limits": [
+            {
+              "id": "accepted_formats",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": [
+                "png",
+                "jpeg"
+              ],
+              "text": "PNG or JPEG (preferred). GIF is not in the iOS list."
+            },
+            {
+              "id": "preferred_dimensions",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "recommended",
+              "text": "For best results, Instagram prefers a JPEG that is 640×640. A larger image is resized. This is not a minimum width."
+            },
+            {
+              "id": "maximum_file_size",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "publishing_api_image",
+      "role": "publishing_api",
+      "limits": [
+        {
+          "id": "accepted_formats",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "jpeg"
+          ],
+          "text": "JPEG."
+        },
+        {
+          "id": "maximum_file_size",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 8,
+          "unit": "MB",
+          "text": "8 MB maximum. v0 does not convert MB to bytes."
+        },
+        {
+          "id": "aspect_ratio_range",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": {
+            "minimum": "4:5",
+            "maximum": "1.91:1"
+          },
+          "text": "Within 4:5 to 1.91:1. v0 stores the ratios as written and does not turn them into a pixel test."
+        },
+        {
+          "id": "minimum_width",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 320,
+          "unit": "pixels",
+          "text": "320. Scaled up if necessary."
+        },
+        {
+          "id": "maximum_width",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 1440,
+          "unit": "pixels",
+          "text": "1440. Scaled down if necessary."
+        },
+        {
+          "id": "height",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Height varies with width and aspect ratio. No separate height number is published."
+        },
+        {
+          "id": "color_space",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": "srgb",
+          "text": "sRGB. Other color spaces are converted to sRGB."
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        }
+      ]
+    },
+    {
+      "id": "share_hand_off_video",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+          "source_updated": "2026-06-30",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "The numbered video limits are in the Android shareable-content table. The iOS section does not publish a video file table."
+        }
+      ],
+      "surfaces": [
+        {
+          "id": "android",
+          "limits": [
+            {
+              "id": "containers",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": [
+                "mkv",
+                "mp4"
+              ],
+              "text": "MKV, MP4."
+            },
+            {
+              "id": "video_codecs",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "video_profile",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "pixel_format",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "color_tags",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "frame_rate",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "minimum_width",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": 640,
+              "unit": "pixels",
+              "text": "Minimum dimensions 640×640. The page spells this minimum dimentions."
+            },
+            {
+              "id": "minimum_height",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": 640,
+              "unit": "pixels",
+              "text": "Minimum dimensions 640×640."
+            },
+            {
+              "id": "minimum_duration_seconds",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": 3,
+              "unit": "seconds",
+              "text": "3 seconds."
+            },
+            {
+              "id": "maximum_duration_seconds",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": 600,
+              "unit": "seconds",
+              "text": "10 minutes."
+            },
+            {
+              "id": "maximum_file_size",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "audio_codecs",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "audio_sample_rate",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "audio_channels",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "cover",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "ui_safe_zone",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            }
+          ]
+        },
+        {
+          "id": "ios",
+          "limits": [
+            {
+              "id": "container",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "video_codecs",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "video_profile",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "pixel_format",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "color_tags",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "frame_rate",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "minimum_width",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "minimum_height",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "maximum_width",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "maximum_height",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "minimum_duration_seconds",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "maximum_duration_seconds",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "maximum_file_size",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "audio_codecs",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "audio_sample_rate",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "audio_channels",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "cover",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "ui_safe_zone",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/instagram-platform/sharing-to-feed",
+              "source_updated": "2026-06-30",
+              "checked_on": "2026-11-11"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "publishing_api",
+      "role": "publishing_api",
+      "limits": [
+        {
+          "id": "container",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "video_codecs",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "video_profile",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "pixel_format",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "color_tags",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "frame_rate",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_codecs",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_sample_rate",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_channels",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "minimum_duration_seconds",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "maximum_duration_seconds",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "maximum_file_size",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "The IG User Media page has no feed-video specification section. Reel specifications are not copied here. media_type=VIDEO appears for a carousel item and has no container, codec, duration, or size attached."
+        }
+      ]
+    }
+  ]
+}

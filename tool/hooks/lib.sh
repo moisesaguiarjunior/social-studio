@@ -72,6 +72,39 @@ check_hook_suite() {
   ) </dev/null
 }
 
+# spec_checks_required: consume NUL-delimited paths on stdin.
+# Return 0 when any path is under spec/. Drain the input so a pipeline
+# cannot hide a match through SIGPIPE. Same delimiter rule as
+# hook_checks_required: unusual names stay one path.
+spec_checks_required() {
+  local file required=1
+  while IFS= read -r -d '' file; do
+    case "$file" in
+      spec/*) required=0 ;;
+    esac
+  done
+  return "$required"
+}
+
+# check_spec <snapshot>: run the schema suite when this tree has schemas.
+# A tree with no spec/schemas is not a schema delivery. Schemas without
+# the suite fail closed; deleting the suite must not skip the check.
+check_spec() {
+  local snapshot="$1"
+  if [ ! -d "$snapshot/spec/schemas" ]; then
+    return 0
+  fi
+  if [ ! -f "$snapshot/spec/tool/test_validate_spec.py" ]; then
+    echo "schema checks: the validation suite is missing." >&2
+    return 1
+  fi
+  (
+    clear_git_environment
+    cd "$snapshot" || exit 1
+    python3 spec/tool/test_validate_spec.py || exit 1
+  )
+}
+
 # Call only in a child environment; SDK commands must not inherit Git's
 # context for the repository being committed or pushed.
 clear_git_environment() {

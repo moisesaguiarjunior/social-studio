@@ -1,0 +1,258 @@
+{
+  "schema_version": "0",
+  "id": "tiktok",
+  "paths": [
+    {
+      "id": "inbox_upload",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "containers",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "mp4",
+            "webm",
+            "mov"
+          ],
+          "text": "MP4 (recommended), WebM, MOV. The accepted set is required. MP4 being recommended does not remove WebM or MOV."
+        },
+        {
+          "id": "mime_types",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-reference-upload-video",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "video/mp4",
+            "video/quicktime",
+            "video/webm"
+          ],
+          "text": "MIME type on the upload request. v0 has no MIME field on a render job, so this is recorded and not a job reject."
+        },
+        {
+          "id": "video_codecs",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "h264",
+            "h265",
+            "vp8",
+            "vp9"
+          ],
+          "text": "H.264 (recommended), H.265, VP8, VP9. The accepted set is required."
+        },
+        {
+          "id": "video_profile",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "pixel_format",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "color_tags",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "minimum_frame_rate",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 23,
+          "unit": "fps"
+        },
+        {
+          "id": "maximum_frame_rate",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 60,
+          "unit": "fps"
+        },
+        {
+          "id": "minimum_width",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 360,
+          "unit": "pixels"
+        },
+        {
+          "id": "minimum_height",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 360,
+          "unit": "pixels"
+        },
+        {
+          "id": "maximum_width",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 4096,
+          "unit": "pixels"
+        },
+        {
+          "id": "maximum_height",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 4096,
+          "unit": "pixels"
+        },
+        {
+          "id": "aspect_ratio",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "minimum_duration_seconds",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "maximum_duration_seconds",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 600,
+          "unit": "seconds",
+          "text": "The longest video a developer can send via the initialize Upload Video endpoint is 10 minutes. The user may trim it in TikTok."
+        },
+        {
+          "id": "account_maximum_duration_seconds",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-reference-query-creator-info",
+          "source_updated": "2026-10-27",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Query Creator Info returns max_video_post_duration_sec per account. The example value 300 is an example, not a universal maximum. Every creator can post 3-minute videos. Some can post 5-minute or 10-minute videos."
+        },
+        {
+          "id": "maximum_file_size",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 4,
+          "unit": "GB",
+          "text": "4 GB. v0 does not convert GB to bytes."
+        },
+        {
+          "id": "audio_codecs",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_sample_rate",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_channels",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "cover",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-reference-upload-video",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Inbox upload, so the person finishes in TikTok. POST /v2/post/publish/inbox/video/init/ with scope video.upload. Direct Post is a different path."
+        }
+      ]
+    },
+    {
+      "id": "direct_post",
+      "role": "publishing_api",
+      "limits": [
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-reference-direct-post",
+          "source_updated": "2026-10-27",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "POST /v2/post/publish/video/init/ posts for the user. It is not the product hand-off. Unaudited clients are limited to private viewing."
+        },
+        {
+          "id": "file_restrictions",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+          "source_updated": "2026-08-04",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "The media guide's file restrictions are recorded on inbox_upload. They are not repeated here as a second product gate."
+        },
+        {
+          "id": "cover",
+          "status": "published",
+          "source": "https://developers.tiktok.com/doc/content-posting-api-reference-direct-post",
+          "source_updated": "2026-10-27",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Direct Post accepts video_cover_timestamp_ms. If omitted or invalid, the cover is the first frame. Inbox Upload does not publish this field."
+        }
+      ]
+    }
+  ]
+}

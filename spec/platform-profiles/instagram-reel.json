@@ -1,0 +1,445 @@
+{
+  "schema_version": "0",
+  "id": "instagram-reel",
+  "paths": [
+    {
+      "id": "share_hand_off",
+      "role": "product_hand_off",
+      "limits": [
+        {
+          "id": "minimum_duration_seconds",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11",
+          "binding": "should",
+          "value": 3,
+          "unit": "seconds",
+          "text": "Should be at least 3 seconds. The iOS page says the same (https://developers.facebook.com/docs/ios/sharing-to-reels-instagram/, updated 2026-04-06). should is not a reject line."
+        },
+        {
+          "id": "maximum_duration_seconds",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11",
+          "binding": "should",
+          "value": 60,
+          "unit": "seconds",
+          "text": "Should be at most 60 seconds. The iOS page says the same (https://developers.facebook.com/docs/ios/sharing-to-reels-instagram/, updated 2026-04-06). should is not a reject line."
+        },
+        {
+          "id": "frame_rate",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "video_profile",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "pixel_format",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "color_tags",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_codecs",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_sample_rate",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "audio_channels",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "cover",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "sticker",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+          "source_updated": "2024-03-18",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "Optional. JPG or PNG. Recommended 640×480. Not a video-file limit."
+        }
+      ],
+      "surfaces": [
+        {
+          "id": "android",
+          "limits": [
+            {
+              "id": "accepted_formats",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+              "source_updated": "2024-03-18",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": [
+                "h264",
+                "h265",
+                "mov",
+                "mp4",
+                "webm"
+              ],
+              "text": "The accepted-format list mixes codecs and containers: H.264, H.265, MOV, MP4, and WebM."
+            },
+            {
+              "id": "nominal_resolution",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+              "source_updated": "2024-03-18",
+              "checked_on": "2026-11-11",
+              "binding": "should",
+              "text": "Videos should be 1080p. The page does not define 1080p in pixels."
+            },
+            {
+              "id": "fullscreen_dimensions",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+              "source_updated": "2024-03-18",
+              "checked_on": "2026-11-11",
+              "binding": "should",
+              "text": "Dimensions should be device fullscreen or smaller. The page does not define device fullscreen in pixels."
+            },
+            {
+              "id": "maximum_file_size",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/android/sharing-to-reels-instagram",
+              "source_updated": "2024-03-18",
+              "checked_on": "2026-11-11"
+            }
+          ]
+        },
+        {
+          "id": "ios",
+          "limits": [
+            {
+              "id": "video_codecs",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/ios/sharing-to-reels-instagram/",
+              "source_updated": "2026-04-06",
+              "checked_on": "2026-11-11",
+              "binding": "required",
+              "value": [
+                "h264",
+                "h265",
+                "webm"
+              ],
+              "text": "H.264, H.265, and WebM."
+            },
+            {
+              "id": "container",
+              "status": "not_published",
+              "source": "https://developers.facebook.com/docs/ios/sharing-to-reels-instagram/",
+              "source_updated": "2026-04-06",
+              "checked_on": "2026-11-11"
+            },
+            {
+              "id": "nominal_resolution",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/ios/sharing-to-reels-instagram/",
+              "source_updated": "2026-04-06",
+              "checked_on": "2026-11-11",
+              "binding": "can_be",
+              "text": "Videos can be 1080p. Pixel dimensions of 1080p are not published."
+            },
+            {
+              "id": "maximum_file_size",
+              "status": "published",
+              "source": "https://developers.facebook.com/docs/ios/sharing-to-reels-instagram/",
+              "source_updated": "2026-04-06",
+              "checked_on": "2026-11-11",
+              "binding": "recommended",
+              "value": 50,
+              "unit": "MB",
+              "text": "Under 50 MB is recommended. v0 does not convert MB to bytes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "publishing_api",
+      "role": "publishing_api",
+      "limits": [
+        {
+          "id": "containers",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "mov",
+            "mp4"
+          ],
+          "text": "MOV or MP4 (MPEG-4 Part 14)."
+        },
+        {
+          "id": "fast_start",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": "moov atom at the front of the file; no edit lists",
+          "text": "v0 records this and does not inspect bytes."
+        },
+        {
+          "id": "video_codecs",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "hevc",
+            "h264"
+          ],
+          "text": "HEVC or H264, progressive scan, closed GOP. HEVC is not renamed to the share hand-off token h265. WebM is not in this list."
+        },
+        {
+          "id": "scan",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": "progressive scan, closed GOP",
+          "text": "v0 does not inspect the bitstream."
+        },
+        {
+          "id": "video_profile",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "pixel_format",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": "4:2:0",
+          "text": "4:2:0 chroma subsampling. v0 does not inspect frames."
+        },
+        {
+          "id": "color_tags",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "minimum_frame_rate",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 23,
+          "unit": "fps",
+          "text": "23 FPS."
+        },
+        {
+          "id": "maximum_frame_rate",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 60,
+          "unit": "fps",
+          "text": "60 FPS."
+        },
+        {
+          "id": "maximum_width",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 1920,
+          "unit": "pixels",
+          "text": "Maximum columns (horizontal pixels): 1920."
+        },
+        {
+          "id": "aspect_ratio_range",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": {
+            "minimum": "0.01:1",
+            "maximum": "10:1"
+          },
+          "text": "Required aspect ratio between 0.01:1 and 10:1. v0 stores the ratio as written and does not turn it into a pixel test."
+        },
+        {
+          "id": "aspect_ratio",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "recommended",
+          "text": "9:16 recommended. Not a reject line."
+        },
+        {
+          "id": "minimum_duration_seconds",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 3,
+          "unit": "seconds",
+          "text": "3 seconds."
+        },
+        {
+          "id": "maximum_duration_seconds",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 900,
+          "unit": "seconds",
+          "text": "15 minutes."
+        },
+        {
+          "id": "maximum_file_size",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 300,
+          "unit": "MB",
+          "text": "300 MB maximum. v0 does not convert MB to bytes."
+        },
+        {
+          "id": "video_bitrate",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 25,
+          "unit": "Mbps",
+          "text": "VBR, 25 Mbps maximum. v0 does not measure bitrate."
+        },
+        {
+          "id": "audio_codecs",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            "aac"
+          ],
+          "text": "AAC. v0 does not inspect audio."
+        },
+        {
+          "id": "audio_sample_rate",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": 48,
+          "unit": "kHz",
+          "text": "48 kHz maximum. Stored in the page's unit. v0 does not convert it."
+        },
+        {
+          "id": "audio_channels",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "required",
+          "value": [
+            1,
+            2
+          ],
+          "text": "1 or 2 (mono or stereo)."
+        },
+        {
+          "id": "audio_bitrate",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "value": 128,
+          "unit": "kbps",
+          "text": "128 kbps, with no published maximum or minimum wording."
+        },
+        {
+          "id": "cover",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "ui_safe_zone",
+          "status": "not_published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11"
+        },
+        {
+          "id": "hand_off",
+          "status": "published",
+          "source": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+          "source_updated": "2026-09-28",
+          "checked_on": "2026-11-11",
+          "binding": "can_be",
+          "text": "media_type=REELS. The share pages say a Reel should be 3–60 seconds. This API allows 15 minutes. Not the share hand-off."
+        }
+      ]
+    }
+  ]
+}

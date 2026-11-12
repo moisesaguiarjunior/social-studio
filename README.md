@@ -2,7 +2,7 @@
 
 Turn app content into **finished, ready-to-post social media pieces with art direction**: Instagram Stories and feed posts, Reels, TikTok, YouTube Shorts and horizontal YouTube videos.
 
-Status: evaluation and synthetic probes; no distributed renderer yet. The phase 0 recommendation is conditional (see `docs/evaluation.md`). Technical choices below remain subject to that evidence.
+Status: evaluation and synthetic probes; no distributed renderer yet. The phase 0 recommendation is conditional (see `docs/evaluation.md`). Schema v0 and its validation tests are in `spec/`. Technical choices below remain subject to that evidence.
 
 ## Goals
 
@@ -87,6 +87,8 @@ One Instagram Story, 9:16, 10–15 s: one photo with slow motion, a recorded voi
 
 JSON Schemas for platform profiles, templates and render jobs (with validation tests); Flutter renderer for Story/Reel/TikTok/Shorts (9:16), feed (4:5, 1:1) and YouTube (16:9); share helpers (Instagram Stories intent, system share sheet); first conformance jobs.
 
+Schema v0 and its validation tests are in `spec/`. The renderer, the share helpers, and the conformance frames are not implemented.
+
 ## Consumers
 
 The first consumers are mobile apps built with Flutter, where the content is personal and sharing is always the user's explicit choice. Each consuming app enforces its own rules about what may be shared before calling the engine.
@@ -99,12 +101,14 @@ Issues and pull requests are welcome once phase 0 is published. Read [CONTRIBUTI
 ## Repository checks
 
 Run `bash tool/check.sh` from any directory to check the checkout: hook
-regressions, then format, strict analysis and tests for each Dart/Flutter
-package. The Quality workflow uses the same entry point, SDK version 3.47.9
-and Python 3.12. It runs on every pull request and pushes to main; there are
-no workflow path filters that could leave a required check pending.
+regressions, schema validation, then format, strict analysis and tests for
+each Dart/Flutter package. The Quality workflow uses the same entry point,
+SDK version 3.47.9 and Python 3.12. It runs on every pull request and pushes
+to main; there are no workflow path filters that could leave a required
+check pending.
 
 Local hooks still check snapshots: staged content at commit time and every
 newly published commit before push. Tool/workflow changes also run hook
-regressions, even when no package owns the file. Independent local review
-is still required before any branch is pushed. See [verification and limits](docs/verification/repository-gates.md).
+regressions, and `spec/` changes run the schema tests, even when no package
+owns the file. Independent local review is still required before any branch
+is pushed. See [verification and limits](docs/verification/repository-gates.md).
