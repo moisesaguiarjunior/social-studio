@@ -87,7 +87,10 @@ def _type_ok(instance, expected: str) -> bool:
     if expected == "boolean":
         return isinstance(instance, bool)
     if expected == "integer":
-        return isinstance(instance, int) and not isinstance(instance, bool)
+        # JSON Schema: a number whose fractional part is zero. Booleans are not numbers.
+        if isinstance(instance, bool) or not isinstance(instance, (int, float)):
+            return False
+        return isinstance(instance, int) or instance.is_integer()
     if expected == "number":
         return isinstance(instance, (int, float)) and not isinstance(instance, bool)
     if expected == "null":
@@ -276,21 +279,92 @@ def enforce_limit(limit: dict, measured: dict, job: dict) -> str | None:
     return None
 
 
+_MEDIA_KINDS = frozenset({"image", "video", "audio", "text"})
+_ASSET_KINDS = frozenset({"image", "video", "audio"})
+
+
+def _duplicate_ids(items: list, label: str) -> list[str]:
+    seen: set[str] = set()
+    errors = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        item_id = item.get("id")
+        if not isinstance(item_id, str):
+            continue
+        if item_id in seen:
+            errors.append(f"duplicate_id {label} {item_id}")
+        seen.add(item_id)
+    return errors
+
+
+def _layout_identity(layout: dict) -> tuple:
+    """A missing surface is the generic fallback, not the same key as a surface."""
+    return (layout.get("profile_id"), layout.get("path_id"), layout.get("surface_id"))
+
+
 def template_link_errors(template: dict) -> list[str]:
+    errors = []
+    errors.extend(_duplicate_ids(template["slots"], "slots"))
+    errors.extend(_duplicate_ids(template["brand_tokens"]["colors"], "colors"))
+    errors.extend(_duplicate_ids(template["motion_presets"], "motion_presets"))
+    errors.extend(_duplicate_ids(template["layers"], "layers"))
+    seen_layouts: set[tuple] = set()
+    for layout in template["layouts"]:
+        identity = _layout_identity(layout)
+        if identity in seen_layouts:
+            surface = identity[2] if identity[2] is not None else "-"
+            errors.append(f"duplicate_layout {identity[0]} {identity[1]} {surface}")
+        seen_layouts.add(identity)
     colors = {item["id"] for item in template["brand_tokens"]["colors"]}
     motions = {item["id"] for item in template["motion_presets"]}
-    slots = {item["id"] for item in template["slots"]}
+    slots = {item["id"]: item for item in template["slots"]}
     style = template["caption_style"]["id"]
-    errors = []
     for layer in template["layers"]:
         if "color" in layer and layer["color"] not in colors:
             errors.append(f"unknown_color {layer['color']}")
         if "motion" in layer and layer["motion"] not in motions:
             errors.append(f"unknown_motion {layer['motion']}")
-        if "slot" in layer and layer["slot"] not in slots:
-            errors.append(f"unknown_slot {layer['slot']}")
-        if layer.get("kind") == "captions" and layer.get("style") != style:
-            errors.append("unknown_caption_style")
+        if "slot" in layer:
+            slot = slots.get(layer["slot"])
+            if slot is None:
+                errors.append(f"unknown_slot {layer['slot']}")
+            elif (
+                layer.get("kind") in _MEDIA_KINDS
+                and slot.get("kind") != layer.get("kind")
+            ):
+                errors.append(f"layer_slot {layer['id']}")
+        if layer.get("kind") == "captions":
+            if layer.get("style") != style:
+                errors.append("unknown_caption_style")
+            for cue in layer.get("cues") or []:
+                start = cue.get("start_ms")
+                end = cue.get("end_ms")
+                if (
+                    isinstance(start, (int, float))
+                    and isinstance(end, (int, float))
+                    and not isinstance(start, bool)
+                    and not isinstance(end, bool)
+                    and end <= start
+                ):
+                    errors.append(f"caption_interval {layer['id']}")
+                    break
+    return errors
+
+
+def slot_value_errors(template: dict, job: dict) -> list[str]:
+    """An image, video, or audio slot takes an asset. A text slot takes text."""
+    slots = {item["id"]: item for item in template["slots"]}
+    errors = []
+    for key, value in job["data"].items():
+        slot = slots.get(key)
+        if slot is None or not isinstance(value, dict):
+            continue
+        kind = slot.get("kind")
+        if kind in _ASSET_KINDS and "asset_id" not in value:
+            errors.append(f"slot_value {key}")
+        elif kind == "text" and "text" not in value:
+            errors.append(f"slot_value {key}")
     return errors
 
 
@@ -356,6 +430,7 @@ def validate_job(job: dict, profiles: dict[str, dict], templates: dict[str, dict
     for key in job["data"]:
         if key not in slot_ids:
             errors.append(f"unknown_slot {key}")
+    errors.extend(slot_value_errors(template, job))
     measured = {
         "duration_ms": job["duration_ms"],
         "width": layout["canvas"]["width"],

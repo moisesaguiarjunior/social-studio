@@ -89,6 +89,8 @@ spec_checks_required() {
 # check_spec <snapshot>: run the schema suite when this tree has schemas.
 # A tree with no spec/schemas is not a schema delivery. Schemas without
 # the suite fail closed; deleting the suite must not skip the check.
+# Standard input is private, same as check_package and check_hook_suite:
+# the suite must not consume a caller's ref list.
 check_spec() {
   local snapshot="$1"
   if [ ! -d "$snapshot/spec/schemas" ]; then
@@ -102,7 +104,7 @@ check_spec() {
     clear_git_environment
     cd "$snapshot" || exit 1
     python3 spec/tool/test_validate_spec.py || exit 1
-  )
+  ) </dev/null
 }
 
 # Call only in a child environment; SDK commands must not inherit Git's

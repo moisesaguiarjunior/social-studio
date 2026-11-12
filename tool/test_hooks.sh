@@ -369,6 +369,22 @@ rm spec/tool/test_validate_spec.py
 bash tool/check.sh >/dev/null 2>&1
 expect reject "the CI entry point fails closed when the schema suite is missing" $?
 
+# The schema suite is a subprocess boundary. Reading its stdin must not
+# swallow a later ref from pre-push.
+git reset -q --hard "$tip"
+mkdir -p spec/schemas spec/tool
+printf '{}\n' >spec/schemas/marker.json
+printf 'import sys\nsys.stdin.read()\n' >spec/tool/test_validate_spec.py
+git add spec
+raw_commit -m "fixture: schema suite reads stdin"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+ref="refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero"
+push "$ref"
+expect pass "a passing schema suite that reads stdin remains valid" $?
+push "$ref
+refs/heads/feature $(git rev-parse HEAD) refs/heads/main $base"
+expect reject "a schema suite cannot consume a later prohibited push ref" $?
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
   exit 1
