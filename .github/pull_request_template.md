@@ -14,7 +14,10 @@
 
 <!-- Canonical implementation/callers checked; why the change belongs here;
 second sources of truth avoided; acceptance criteria the tests might miss.
-Code, tests and documentation agreeing does not prove the premise is right. -->
+Code, tests and documentation agreeing does not prove the premise is right.
+If this changes a gate and its tests together, inspect for removed/weakened
+assertions and challenge the gate with an independent invalid case. A green
+suite from the same snapshot cannot establish its own adequacy. -->
 
 ## Verification
 

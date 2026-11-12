@@ -3,8 +3,10 @@
 # content that will be committed or pushed, never on the working tree.
 
 # check_package <dir>: format, analysis and tests for one Dart/Flutter package.
-# Every step fails explicitly: callers may use `check_package || ...`, where
-# `set -e` is ignored by bash, so no step may rely on it.
+# Standard input is private: SDK/test tools must not consume a caller's
+# package/ref stream. Every step fails explicitly: callers may use
+# `check_package || ...`, where `set -e` is ignored by bash, so no step
+# may rely on it.
 check_package() {
   local pkg="$1" runner=dart
   if grep -q 'sdk: flutter' "$pkg/pubspec.yaml"; then runner=flutter; fi
@@ -18,7 +20,7 @@ check_package() {
     dart format --output=none --set-exit-if-changed . || exit 1
     "$runner" analyze --fatal-infos || exit 1
     if [ -d test ]; then "$runner" test || exit 1; fi
-  )
+  ) </dev/null
 }
 
 # packages_in <root>: every directory under <root> containing a pubspec.yaml.
@@ -56,6 +58,7 @@ hook_checks_required() {
 }
 
 # check_hook_suite <snapshot>: never fall through when the suite is deleted.
+# The suite owns no caller input; this also protects the outer pre-push ref loop.
 check_hook_suite() {
   local snapshot="$1"
   if [ ! -f "$snapshot/tool/test_hooks.sh" ]; then
@@ -66,7 +69,7 @@ check_hook_suite() {
     clear_git_environment
     cd "$snapshot" || exit 1
     bash tool/test_hooks.sh || exit 1
-  )
+  ) </dev/null
 }
 
 # Call only in a child environment; SDK commands must not inherit Git's

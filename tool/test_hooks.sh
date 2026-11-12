@@ -262,6 +262,45 @@ printf '#!/usr/bin/env bash\nexit 6\n' >tool/test_hooks.sh
 bash tool/check.sh >/dev/null 2>&1
 expect reject "the CI entry point rejects a failing hook suite" $?
 
+# Checkers are subprocess boundaries: neither a package tool nor a regression
+# suite may consume the package/ref lists owned by their callers.
+git reset -q --hard "$tip"
+mkdir -p aaa zzz "$work/stdin-tools"
+for pkg in aaa zzz; do
+  printf 'name: stdin_probe\nenvironment:\n  sdk: ^3.13.0\n' >"$pkg/pubspec.yaml"
+done
+cat >"$work/stdin-tools/dart" <<'STUB'
+#!/usr/bin/env bash
+cat >/dev/null
+if [ "$(basename "$PWD")" = zzz ] && [ "${1:-}" = analyze ]; then
+  exit 23
+fi
+exit 0
+STUB
+chmod +x "$work/stdin-tools/dart"
+git add aaa zzz
+PATH="$work/stdin-tools:$PATH" bash tool/hooks/pre-commit >/dev/null 2>&1
+expect reject "pre-commit checks later packages even when a tool reads stdin" $?
+raw_commit -m "fixture: later package fails analysis"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+PATH="$work/stdin-tools:$PATH" push "refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero"
+expect reject "pre-push checks later packages even when a tool reads stdin" $?
+PATH="$work/stdin-tools:$PATH" bash tool/check.sh >/dev/null 2>&1
+expect reject "repository checks retain later packages when a tool reads stdin" $?
+
+# A regression-suite subprocess must not swallow another ref from pre-push.
+git reset -q --hard "$tip"
+printf '#!/usr/bin/env bash\ncat >/dev/null\nexit 0\n' >tool/test_hooks.sh
+git add tool/test_hooks.sh
+raw_commit -m "fixture: passing suite reads stdin"
+bash tool/record-review.sh Reviewer no-blocking-findings >/dev/null 2>&1
+ref="refs/heads/feature $(git rev-parse HEAD) refs/heads/feature $zero"
+PATH="$work/stdin-tools:$PATH" push "$ref"
+expect pass "a passing stdin-reading suite and tool remain valid" $?
+PATH="$work/stdin-tools:$PATH" push "$ref
+refs/heads/feature $(git rev-parse HEAD) refs/heads/main $base"
+expect reject "a suite cannot consume a later prohibited push ref" $?
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures hook check(s) failed"
   exit 1
