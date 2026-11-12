@@ -8,3 +8,5 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Decide whether changed paths affect the hook/CI gates | `hook_checks_required` | `tool/hooks/lib.sh` | staged pre-commit and every unpublished pre-push commit |
 | Run the hook regression gate in an isolated Git environment | `check_hook_suite` (isolated stdin) | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |
 | Full checkout checks without depending on installed hooks | `bash tool/check.sh` | `tool/check.sh` | Quality workflow, local verification |
+| Container reading for one encoded Story (size, `moov` before `mdat`, and `ffprobe` when it runs) | Call `probes/phase0/tool/inspect_story15.py` as a subprocess. Do not copy it | `probes/phase1/tool/inspect_story.py` | Phase 1 Story spike |
+| Synthetic swatch | The writer in `probes/phase0/tool/generate_story15_assets.py`, copied. Not extracted. The phase 0 generator is recorded evidence, and this tone is a different length | `probes/phase1/tool/generate_story_assets.py` | `probes/phase1/lib/story_12.dart` |

@@ -95,7 +95,6 @@ The rest of the probe lock (`async`, `collection`, `fake_async`, `matcher`, `lea
 
 `image` 4.8.0, read because `widget_recorder_plus` depends on `image: ^4.1.7`, is MIT, copyright 2013–2022 Brendan Duncan. That version was not locked by a `widget_recorder_plus` solve.
 
-
 ## CI-only actions
 
 Pinned by immutable revision in `.github/workflows/quality.yml`, verified from
@@ -107,3 +106,24 @@ not app dependencies. SDK versions are configured separately in the workflow.
 | actions/checkout (v5) | `fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09` | MIT | https://github.com/actions/checkout |
 | subosito/flutter-action (v2) | `1a449444c387b1966244ae4d4f8c696479add0b2` | MIT | https://github.com/subosito/flutter-action |
 | actions/setup-python (v6) | `ece7cb06caefa5fff74198d8649806c4678c61a1` | MIT | https://github.com/actions/setup-python |
+
+## Phase 1 probe
+
+`probes/phase1` depends on `fluvie` 0.3.1, `fluvie_mobile_encoder` 0.3.1, and `alchemist` 0.14.1, which are already in the tables above. `integration_test` is the Flutter SDK. Resolved versions are in `probes/phase1/pubspec.lock`. Checked 2026-11-11. This probe is not a distributed package.
+
+The phase 1 lock moves three packages that the phase 0 lock already recorded. The license files were read again: `flutter_svg` 2.3.4 is still MIT, copyright 2018 Dan Field; `vector_graphics` 1.3.0 and `vector_graphics_compiler` 1.3.6 are still BSD-3-Clause, copyright 2013 The Flutter Authors.
+
+Packages in the phase 1 lock that the phase 0 lock does not have:
+
+| Dependency | Version | License | Used for | Checked on |
+| --- | --- | --- | --- | --- |
+| `file` | 7.0.1 | BSD-3-Clause, Dart project authors | Pulled in by `flutter_driver` | 2026-11-11 |
+| `platform` | 3.2.0 | BSD-3-Clause, Dart project authors | Pulled in by `flutter_driver` | 2026-11-11 |
+| `process` | 5.0.6 | BSD-3-Clause, Dart project authors | Pulled in by `flutter_driver` | 2026-11-11 |
+| `sync_http` | 0.3.1 | BSD-3-Clause, Dart project authors | Pulled in by `webdriver` | 2026-11-11 |
+| `webdriver` | 3.2.0 | Apache-2.0 | Pulled in by `flutter_driver` | 2026-11-11 |
+| `flutter_driver`, `integration_test`, `fuchsia_remote_debug_protocol` | SDK | BSD-3-Clause, Flutter authors | The on-device functional check | 2026-11-11 |
+
+None of those is GPL. The headless encode did not download a new FFmpeg archive. It ran a local binary as a separate process, as in `docs/decisions/0002-ffmpeg-in-developer-tools.md`.
+
+The phase 1 inspector tests also run `ffmpeg` as a separate process and fail when it is missing. The GitHub-hosted Ubuntu 24.04 runner image does not list it. The image readme for `ubuntu24/20260810.271` in `actions/runner-images` (installed software and the apt package table, read 2026-11-11) has no `ffmpeg` entry: <https://github.com/actions/runner-images/blob/ubuntu24/20260810.271/images/ubuntu/Ubuntu2404-Readme.md>. `.github/workflows/quality.yml` installs the distro `ffmpeg` package with `apt-get`, then runs `bash tool/check.sh`. That install is a developer-tool process under the decision above. It is not the pinned BtbN archive, and it is not shipped in an app.

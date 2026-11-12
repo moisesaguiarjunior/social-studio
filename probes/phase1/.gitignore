@@ -1,0 +1,10 @@
+.dart_tool/
+build/
+__pycache__/
+*.pyc
+out/
+*.mp4
+assets/swatch.png
+assets/tone.wav
+.flutter-plugins-dependencies
+.fluvie/

@@ -1,0 +1,33 @@
+name: phase1_probe
+description: >-
+  Synthetic phase 1 Story spike. Not published. No real photos, voices,
+  or transcripts.
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fluvie: 0.3.1
+  fluvie_mobile_encoder: 0.3.1
+
+dev_dependencies:
+  # The fluvie_cli harness imports this so flutter test can load real fonts.
+  alchemist: 0.14.1
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  # Directory entry, not individual files. The swatch and the tone are
+  # generated and gitignored; Flutter bundles whatever is in assets/ when
+  # the check runs. fluvie_cli rewrites this block to the same entry.
+  assets:
+    - assets/
