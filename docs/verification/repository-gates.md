@@ -60,3 +60,19 @@ results and branch-protection settings are recorded separately after the pull
 request exists; local verification does not claim a GitHub run.
 No golden reference, phone performance or phase 1 rendering result is changed
 or certified by these repository checks.
+
+
+## Review follow-up: checker input boundaries
+
+Reused `check_package` and `check_hook_suite`; no parallel checker or caller-level
+redirection policy was added. Each helper's child environment reads `/dev/null`,
+so tools cannot consume package lists or the outer pre-push ref stream. The five
+new regression cases use a synthetic stdin-reading tool/suite: a later invalid
+package is rejected by pre-commit, pre-push and checkout checks; a later prohibited
+ref remains visible; a passing input-reading suite/tool remains accepted.
+
+Before the fix, all four rejection cases failed by returning success, while the
+valid control passed. With the fix, all 42 hook scenarios pass. The documentation
+policy is separately proposed in [decision 0004](../decisions/0004-review-and-test-policy.md),
+and the PR template asks reviewers to challenge gates and changed suites together.
+This does not make the suite tamper-proof or certify rendering/device behavior.
