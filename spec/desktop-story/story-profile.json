@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "id": "instagram-story",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "maximumDurationMs": 20000,
+  "source": {
+    "url": "https://developers.facebook.com/docs/instagram-platform/sharing-to-stories",
+    "checked": "2026-11-11",
+    "evidence": "docs/platform-requirements.md"
+  },
+  "notes": "Canvas and fps are authoring choices; the share page permits 1080p but does not define a pixel pair or fps. Maximum duration follows the cited share page. No official UI safe-zone value is asserted."
+}

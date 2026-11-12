@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "profile",
+    "background",
+    "captionColor",
+    "captionBackground",
+    "captionFontSize",
+    "captionInset",
+    "zoom",
+    "notes",
+    "captionAlignmentY"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "const": "story-photo-v1"
+    },
+    "profile": {
+      "const": "instagram-story"
+    },
+    "background": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
+    },
+    "captionColor": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
+    },
+    "captionBackground": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
+    },
+    "captionFontSize": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "captionInset": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "zoom": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 1.5
+    },
+    "notes": {
+      "type": "string"
+    },
+    "captionAlignmentY": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+    }
+  },
+  "description": "Colors use #RRGGBB or #AARRGGBB. All dimensions and margins are authoring choices, not platform requirements."
+}

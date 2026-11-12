@@ -203,3 +203,15 @@ The flushed file has the phase 1 shape: the still, its motion, the burned-in cue
 ## Known limits
 
 The Lottie clock and iOS in-composition video clips were not exercised. `docs/evaluation.md` records both. Peak memory, heat, and backgrounding during a render were not measured. The encode from before the schedule flush does not show the synthetic still. The encode that drains the callback does, and that drain exists only in the test. Neither result is a phone measurement. `fluvie` 0.3.1 on a device still needs the caption pre-resolve and the motion callback drained outside the test binding.
+
+## Inspector follow-up — encoded timestamps
+
+The historical measurements above remain the outputs of the original run.
+The inspector now reads flash `pts_time` instead of `frame * 1000 / 30`,
+and preserves the common input timeline for both audio and video using
+`-copyts`. `video_frame_ms` is the first observed positive timestamp spacing,
+just like `audio_frame_ms`; neither describes every interval of a VFR file.
+Missing or non-finite PTS on a detected event fails the measurement.
+Regression fixtures exercise 15, 24 and 60 fps and a nonzero timestamp origin.
+This correction does not re-certify the historical encoded files or establish
+an acceptable product sync tolerance. See [verification](verification/render-validation.md).

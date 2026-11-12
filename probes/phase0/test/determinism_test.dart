@@ -85,8 +85,8 @@ int _differing(
   return count;
 }
 
-/// Writes one captured frame to [path] as a PNG.
-Future<void> _writePng(Uint8List frames, int frame, String path) async {
+/// Decodes one captured RGBA frame for comparison or evidence export.
+Future<ui.Image> _frameImage(Uint8List frames, int frame) async {
   const width = 1080;
   const height = 1920;
   final frameBytes = width * height * 4;
@@ -99,12 +99,27 @@ Future<void> _writePng(Uint8List frames, int frame, String path) async {
     pixelFormat: ui.PixelFormat.rgba8888,
   );
   final codec = await descriptor.instantiateCodec();
-  final image = (await codec.getNextFrame()).image;
-  final png = await image.toByteData(format: ui.ImageByteFormat.png);
-  if (png == null) {
-    throw StateError('Could not encode frame $frame as PNG.');
+  try {
+    return (await codec.getNextFrame()).image;
+  } finally {
+    codec.dispose();
+    descriptor.dispose();
+    buffer.dispose();
   }
-  await File(path).writeAsBytes(png.buffer.asUint8List());
+}
+
+/// Writes evidence without changing the committed visual references.
+Future<void> _writePng(Uint8List frames, int frame, String path) async {
+  final image = await _frameImage(frames, frame);
+  try {
+    final png = await image.toByteData(format: ui.ImageByteFormat.png);
+    if (png == null) {
+      throw StateError('Could not encode frame $frame as PNG.');
+    }
+    await File(path).writeAsBytes(png.buffer.asUint8List());
+  } finally {
+    image.dispose();
+  }
 }
 
 /// Proves two headless captures of the synthetic story match, frame for frame.
@@ -155,6 +170,23 @@ Future<void> main() async {
     final frame0 = first.sublist(0, frameBytes);
     final frame59 = first.sublist(59 * frameBytes, 60 * frameBytes);
     expect(frame0, isNot(equals(frame59)), reason: 'the rectangle should move');
+
+    // Reuse the reviewed reference frames; repeatability alone accepts a
+    // consistently wrong scene. Never update these to accommodate a failure.
+    for (final frame in [0, 59]) {
+      final image = await tester.runAsync(() => _frameImage(first, frame));
+      if (image == null) {
+        throw StateError('Could not decode frame $frame.');
+      }
+      try {
+        await expectLater(
+          image,
+          matchesGoldenFile('../evidence/frame$frame.png'),
+        );
+      } finally {
+        image.dispose();
+      }
+    }
 
     final evidence = Platform.environment['PHASE0_EVIDENCE'];
     if (evidence != null && evidence.isNotEmpty) {

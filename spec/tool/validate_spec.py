@@ -489,6 +489,32 @@ def catalog_errors() -> list[str]:
     return catalog_errors_for(profiles, templates, jobs)
 
 
+def desktop_story_limit_errors(profile: dict, desktop: dict) -> list[str]:
+    """Compare the desktop projection with the canonical Story share limit.
+
+    This is cross-format consistency, not support for rendering v0 jobs.
+    Reuse v0's millisecond conversion rather than another platform constant.
+    """
+    if profile.get("id") != "instagram-story" or desktop.get("id") != profile.get("id"):
+        return ["desktop_story profile_mismatch"]
+    paths = [item for item in profile.get("paths", []) if item.get("id") == "share_hand_off"]
+    if len(paths) != 1:
+        return ["desktop_story missing_share_path"]
+    limits = [item for item in paths[0].get("limits", [])
+              if item.get("id") == "maximum_duration_seconds"]
+    if len(limits) != 1:
+        return ["desktop_story missing_duration_limit"]
+    rule = limits[0]
+    if (rule.get("status") != "published" or rule.get("binding") != "required"
+            or rule.get("unit") != "seconds" or not _type_ok(rule.get("value"), "number")):
+        return ["desktop_story unsupported_duration_rule"]
+    actual = desktop.get("maximumDurationMs")
+    scale = SCALAR_LIMITS["maximum_duration_seconds"][2]
+    if not _type_ok(actual, "integer") or actual != rule["value"] * scale:
+        return ["desktop_story duration_limit_mismatch"]
+    return []
+
+
 def main() -> int:
     errors = catalog_errors()
     if errors:

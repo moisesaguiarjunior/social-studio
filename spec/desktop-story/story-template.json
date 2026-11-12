@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "id": "story-photo-v1",
+  "profile": "instagram-story",
+  "background": "#101820",
+  "captionColor": "#FFFFFF",
+  "captionBackground": "#CC101820",
+  "captionFontSize": 42,
+  "captionInset": 96,
+  "zoom": 1.08,
+  "notes": "All visual values are authoring choices. Caption inset is a design margin, not an official platform safe zone.",
+  "captionAlignmentY": 0.55
+}

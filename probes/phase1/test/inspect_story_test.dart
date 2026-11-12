@@ -323,6 +323,64 @@ void main() {
     );
   });
 
+  for (final timing in [
+    (fps: 15, offset: 0),
+    (fps: 24, offset: 0),
+    (fps: 60, offset: 0),
+    (fps: 30, offset: 2),
+  ]) {
+    final fps = timing.fps;
+    test(
+      'flash timing uses encoded timestamps at $fps fps offset ${timing.offset}',
+      () async {
+        final ffmpeg = await _ffmpeg();
+        final directory = await Directory.systemTemp.createTemp('phase1-pts-');
+        addTearDown(() => directory.delete(recursive: true));
+        final clip = File('${directory.path}/timing.mp4');
+        await _writeStoryClip(
+          ffmpeg,
+          clip,
+          swatch: true,
+          captions: true,
+          fps: fps,
+          timestampOffset: timing.offset,
+        );
+        final result = await _inspect(
+          python: python,
+          args: [clip.path],
+          environment: _toolEnv(ffmpeg),
+        );
+        expect(
+          result.exitCode,
+          0,
+          reason: '${result.stdout}\n${result.stderr}',
+        );
+        // The fixture flashes on frame 6, independent of the encoding rate.
+        expect(
+          int.parse(_field(result.stdout as String, 'flash_start_ms')),
+          (6000 / fps).round() + timing.offset * 1000,
+        );
+        expect(
+          double.parse(_field(result.stdout as String, 'video_frame_ms')),
+          closeTo(1000 / fps, 0.02),
+        );
+        // The tone starts at the common origin. Its detected AAC frame can
+        // precede onset by one frame; compare the two timelines independently.
+        final audioFrame = double.parse(
+          _field(result.stdout as String, 'audio_frame_ms'),
+        );
+        expect(
+          int.parse(_field(result.stdout as String, 'tone_start_ms')),
+          closeTo(timing.offset * 1000, audioFrame.ceil()),
+        );
+        expect(
+          int.parse(_field(result.stdout as String, 'av_offset_ms')),
+          closeTo(-6000 / fps, audioFrame.ceil()),
+        );
+      },
+    );
+  }
+
   test('a clip with the swatch, motion, and captions passes', () async {
     final ffmpeg = await _ffmpeg();
     final directory = await Directory.systemTemp.createTemp('phase1-pixels-');
@@ -481,11 +539,12 @@ Future<void> _writeStoryClip(
   required bool captions,
   bool captionAtEightSeconds = true,
   bool motion = true,
+  int fps = 30,
+  int timestampOffset = 0,
 }) async {
   const width = 64;
   const height = 64;
-  const fps = 30;
-  const frameCount = 9 * fps;
+  final frameCount = 9 * fps;
   final fill = swatch
       ? (red: 242, green: 193, blue: 78)
       : (red: 242, green: 193, blue: 200);
@@ -506,7 +565,7 @@ Future<void> _writeStoryClip(
       pixels[index + 2] = color.blue;
     }
     if (frame >= 12) {
-      final later = frame >= 150;
+      final later = frame >= 5 * fps;
       _fillRect(
         pixels,
         width,
@@ -564,6 +623,8 @@ Future<void> _writeStoryClip(
     '-c:a',
     'aac',
     '-shortest',
+    '-output_ts_offset',
+    '$timestampOffset',
     output.path,
   ]);
   if (result.exitCode != 0) {

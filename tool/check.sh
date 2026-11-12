@@ -7,6 +7,7 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$root/tool/hooks/lib.sh"
 
 check_hook_suite "$root" || exit 1
+# Includes the desktop Story projection against the canonical v0 share limit.
 check_spec "$root" || exit 1
 status=0
 while IFS= read -r pkg; do

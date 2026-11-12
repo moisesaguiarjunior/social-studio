@@ -131,3 +131,34 @@ The phase 1 inspector tests also run `ffmpeg` as a separate process and fail whe
 ## Schema checker
 
 `spec/tool/validate_spec.py` checks schema v0. It uses the Python 3 standard library only (3.9 or newer). No package was added, and the checker does not download a JSON Schema implementation. See `docs/decisions/0003-schema-versioning.md`.
+
+The local draft patches under `probes/phase1/upstream/` target the same
+MIT-licensed `fluvie` and `fluvie_mobile_encoder` 0.3.1 sources. Their verification
+uses temporary path overrides only, with offline resolution. No new dependency,
+encoder binary or distributed fork is introduced; normal probe lockfiles remain
+unchanged.
+
+## Desktop Story workflow
+
+Checked 2026-11-12 against the installed package LICENSE files. The new package
+reuses the pinned phase 1 dependency graph (including Fluvie 0.3.1 and `path`
+1.9.1, BSD-3-Clause); its lockfile adds only these packages. Roboto is reused
+from the phase 0 fixture with the same license/hash above. No font is downloaded.
+
+| Dependency | Version | License | Purpose |
+| --- | --- | --- | --- |
+| `json_schema` | 5.2.2 | Boost-1.0; included JSON-Schema-Test-Suite material MIT | Synchronous canonical schema validation |
+| `logging` | 1.3.0 | BSD-3-Clause | Validator dependency; no content logging is configured |
+| `quiver` | 3.2.2 | Apache-2.0 | Validator's URI dependency |
+| `rfc_6901` | 0.2.1 | MIT | JSON Pointer handling |
+| `uri` | 1.0.0 | BSD-3-Clause | Validator URI handling |
+
+The [validator license](https://pub.dev/packages/json_schema/license) and
+[synchronous API](https://pub.dev/documentation/json_schema/latest/json_schema/JsonSchema/create.html)
+were checked on the same date. Synchronous construction cannot fetch remote
+references. This adds a permitted license outside the original phase 0 L1 pass
+list; it does not retrospectively change that evaluation result.
+
+The desktop package directly uses the existing `crypto` 3.0.8 (BSD-3-Clause)
+for streamed SHA-256 input-integrity checks. The version and license are already
+inventoried above; no additional binary or package version is introduced.
