@@ -1,11 +1,10 @@
 # Unreleased
 
+- Protect the production capture HTTP boundary with a persistent injected-request regression.
 - Block new Dart HTTP connections during desktop capture, including real-async work.
 - Verify synthetic source metadata is absent from encoded video and cover in CLI regression tests.
-
 - Explicitly disable capture caching while using the upstream SDK, whose
   cache hits skip the sequential host pump.
-
 - Advance the desktop scheduler at the video's FPS, with frame zero at zero
   and no accumulated rounding drift. Test native ticker elapsed time in the
   actual raw-frame capture pipeline. Keep the current Fluvie dependency.

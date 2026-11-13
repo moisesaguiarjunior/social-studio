@@ -18,6 +18,7 @@ multi-platform engine is the destination; see the roadmap for unfinished work.
 | Run checks or understand coverage | [Repository gates](verification/repository-gates.md) and [coverage](verification/coverage.md) |
 | Reuse an implementation or review a design choice | [Reuse map](reuse.md) and [architecture decisions](decisions/) |
 | Check platform rules or dependency licensing | [Platform research](platform-requirements.md) and [dependency inventory](dependencies.md) |
+| Review documentation accuracy and retrieval choices | [README content review](verification/readme-discovery.md) |
 | Contribute code or run an independent review | [Contribution standards](../CONTRIBUTING.md) and [agent instructions](../AGENTS.md) |
 
 ## Canonical sources

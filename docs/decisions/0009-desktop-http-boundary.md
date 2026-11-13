@@ -42,8 +42,12 @@ Fluvie's resolver or network client implementation.
 
 The loopback regression proves an endpoint works before the guarded attempt,
 then checks the typed rejection, no additional server request and zone restoration.
-The existing real CLI render is the valid capture control. Synthetic source
-metadata regression and disposable mutation/injection evidence are recorded in
+The existing real CLI render is the valid capture control. The permanent
+`capture_http_boundary_test.dart` also invokes the production capture entry
+point with a request-injecting binding. It checks the typed rejection inside
+Fluvie's real-async callbacks and complete raw-frame output. Removing only the
+production scope fails that regression. Synthetic source metadata controls and
+mutation evidence are recorded in
 [desktop verification](../verification/desktop-story.md).
 
 SDK references checked 2026-11-13:

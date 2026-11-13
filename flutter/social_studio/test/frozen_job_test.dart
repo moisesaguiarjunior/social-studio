@@ -63,36 +63,22 @@ void main() {
           expect(result.exitCode, 0, reason: '${result.stderr}');
         }
 
-        for (final color in ['red', 'blue']) {
-          await encode([
-            '-f',
-            'lavfi',
-            '-i',
-            'color=$color:s=16x16',
-            '-frames:v',
-            '1',
-            p.join(temp.path, '$color.png'),
-          ]);
-        }
-        // Reuse the fixture's PNG chunk writer to mark an actual decoded image.
-        final markImage = await Process.run('python3', [
-          '-c',
-          '''import runpy, sys
-from pathlib import Path
-chunk = runpy.run_path(sys.argv[1])['chunk']
-image = Path(sys.argv[2])
-data = image.read_bytes()
-markers = chunk(b'tEXt', b'Device\\x00SyntheticPhotoDevice') + chunk(b'tEXt', b'Location\\x00SyntheticPhotoLocation')
-image.write_bytes(data[:-12] + markers + data[-12:])
-''',
-          p.absolute('../../probes/phase0/tool/generate_story15_assets.py'),
-          p.join(temp.path, 'red.png'),
+        await encode([
+          '-f',
+          'lavfi',
+          '-i',
+          'color=blue:s=16x16',
+          '-frames:v',
+          '1',
+          p.join(temp.path, 'blue.png'),
         ]);
-        expect(markImage.exitCode, 0, reason: '${markImage.stderr}');
-        expect(
-          latin1.decode(File(p.join(temp.path, 'red.png')).readAsBytesSync()),
-          contains('SyntheticPhotoLocation'),
+        File('test/fixtures/tagged_red.png')
+            .copySync(p.join(temp.path, 'red.png'));
+        final imageBytes = latin1.decode(
+          File(p.join(temp.path, 'red.png')).readAsBytesSync(),
         );
+        expect(imageBytes, contains('SyntheticPhotoDevice'));
+        expect(imageBytes, contains('SyntheticPhotoLocation'));
         await encode([
           '-f',
           'lavfi',

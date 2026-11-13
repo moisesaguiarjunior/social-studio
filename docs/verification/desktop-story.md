@@ -254,3 +254,38 @@ review reran 22 focused clock/privacy/HTTP/CLI tests plus the coverage-tool suit
 and reported no blocking findings. This records working-tree verification;
 exact-commit publication attestation is maintained separately in private Git
 metadata, as required by the contribution policy.
+
+## PR #14 review follow-up — persistent capture-boundary regression
+
+SS14-1 identified that the earlier HTTP injection evidence was disposable: the
+regular suite could still pass after removing the production capture scope.
+`test/capture_http_boundary_test.dart` now starts a subprocess that imports and
+runs the actual `tool/capture_story.dart` entry point. Its test-only widget
+binding injects an HTTP attempt inside each Fluvie real-async callback and
+requires `OfflineRenderException`. The production capture file is not rewritten
+or replaced. The parent also checks complete raw frames and supplied captions
+for a small synthetic job, so an unused callback or skipped capture cannot pass.
+
+The regression passed with the existing scope. In a disposable checkout,
+removing only that scope caused the persistent test to fail at its injected
+request assertion: the expected offline exception was replaced by Flutter's
+mock request. This was not a compilation, missing-tool or unrelated-input
+failure. An independent reviewer repeated both the valid run and that mutation
+with the same result. Temporary copies were removed.
+
+The tagged-photo input is now a documented, checked-in synthetic fixture shared
+by the capture and CLI tests. The CLI regression checks both photo canaries at
+input and continues checking the video and cover. It no longer executes a
+historical probe generator. No existing visual reference was regenerated.
+
+`bash tool/check.sh` passed: 55 hook scenarios, three coverage-tool tests,
+61 schema tests and 75 Flutter tests (52 desktop, six phase 0, seventeen phase 1).
+Formatting and strict analysis were clean. The README's inline JSON example
+passed the real CLI validator with synthetic files; changed local document links
+and heading anchors and `git diff --check` passed. Software remains Flutter
+3.47.9, Dart 3.13.7, Python 3.10.20 and FFmpeg 8.1.2.
+
+The [README review](readme-discovery.md) records factual/navigation findings and
+applied corrections. Search rankings, AI citations, browser/badge display and
+mobile execution were not measured by these local checks. Native/network
+sandbox limits from decision 0009 remain unchanged.

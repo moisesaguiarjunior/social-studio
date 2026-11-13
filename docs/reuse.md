@@ -33,3 +33,5 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Block new Dart HTTP connections during capture | Zone-scoped `HttpOverrides` connection factory, preserved by the pinned real-async capture callbacks | `flutter/social_studio/lib/src/offline_rendering.dart` | `tool/capture_story.dart` in the desktop package |
 | Collect desktop library coverage | Flutter's existing `test --coverage`, with LCOV source prefixing | `tool/coverage.sh` | Coverage workflow and local measurement |
 | Find docs and canonical implementation by task | Documentation index and linked source map | `docs/README.md` | README, AGENTS.md and `llms.txt` |
+| Verify the production capture retains its HTTP boundary | Actual capture `main` with a request-injecting widget binding in real asynchronous callbacks | `flutter/social_studio/test/support/capture_http_attempt.dart` | `test/capture_http_boundary_test.dart` in the desktop package |
+| Synthetic tagged photo for capture and metadata tests | Checked-in red RGB PNG with synthetic device/location text | `flutter/social_studio/test/fixtures/tagged_red.png` | Frozen-job CLI and capture HTTP regressions |
