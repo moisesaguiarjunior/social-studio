@@ -61,6 +61,95 @@ void main() {
     );
   });
 
+  test('snapshots freeze configuration and rebase media for a round trip', () {
+    final spec = Directory('${directory.path}/source-spec')..createSync();
+    for (final source in Directory('../../spec/desktop-story').listSync()) {
+      if (source is File) {
+        source.copySync('${spec.path}/${source.uri.pathSegments.last}');
+      }
+    }
+    file.writeAsStringSync(jsonEncode(job));
+    final validated = StoryJob.load(file.path, specDirectory: spec.path);
+    final target = Directory.systemTemp.createTempSync('snapshot-round-trip-');
+    addTearDown(() => target.deleteSync(recursive: true));
+    final snapshot = validated.writeSnapshot(target.path);
+    // All external configuration sources change after validation. Snapshot
+    // replay must retain the loaded schemas/data and the original media paths.
+    file.writeAsStringSync('{"version":999}');
+    for (final source in spec.listSync().whereType<File>()) {
+      source.writeAsStringSync('{}');
+    }
+    final replay = StoryJob.load(snapshot, specDirectory: target.path);
+    expect(replay.toSrt(), validated.toSrt());
+    expect(replay.scenes.single.imagePath, validated.scenes.single.imagePath);
+    expect(replay.scenes.single.durationMs, validated.durationMs);
+    expect(replay.audioPath, validated.audioPath);
+    expect(replay.coverMs, validated.coverMs);
+    expect(replay.profile, validated.profile);
+    expect(replay.template, validated.template);
+    expect(replay.verifyMediaUnchanged, returnsNormally);
+    if (!Platform.isWindows) {
+      final alias = Link('${directory.path}/snapshot-alias')
+        ..createSync(target.path);
+      final aliased = validated.writeSnapshot(alias.path);
+      expect(
+        StoryJob.load(
+          aliased,
+          specDirectory: alias.path,
+        ).scenes.single.imagePath,
+        validated.scenes.single.imagePath,
+      );
+    }
+  });
+
+  test('accepts a synthetic JPEG input as well as PNG', () async {
+    expect(load, returnsNormally);
+    final jpeg = File('${directory.path}/photo.jpg');
+    final generated = await Process.run(
+      Platform.environment['FLUVIE_FFMPEG'] ?? 'ffmpeg',
+      [
+        '-v',
+        'error',
+        '-i',
+        'test/fixtures/tagged_red.png',
+        '-frames:v',
+        '1',
+        jpeg.path,
+      ],
+    );
+    expect(generated.exitCode, 0, reason: '${generated.stderr}');
+    job['image'] = 'photo.jpg';
+    expect(load().scenes.single.imagePath, jpeg.resolveSymbolicLinksSync());
+  });
+
+  test(
+    'malformed or non-object JSON has a typed diagnostic without content',
+    () {
+      expect(load, returnsNormally);
+      for (final source in [
+        '[]',
+        'null',
+        '"synthetic private text"',
+        '{"synthetic private text":',
+      ]) {
+        file.writeAsStringSync(source);
+        expect(
+          () => StoryJob.load(
+            file.path,
+            specDirectory: '../../spec/desktop-story',
+          ),
+          throwsA(
+            isA<StoryJobException>().having(
+              (error) => error.toString(),
+              'safe diagnostic',
+              isNot(contains('synthetic private text')),
+            ),
+          ),
+        );
+      }
+    },
+  );
+
   for (final change in <String, Object?>{
     'version': 2,
     'template': 'unknown',

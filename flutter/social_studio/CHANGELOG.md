@@ -1,5 +1,9 @@
 # Unreleased
 
+- Return typed, content-free errors for malformed JSON input.
+- Cover snapshot replay/rebasing, JPEG input, fractional scene review and real signal delivery.
+- Handle desktop SIGINT/SIGTERM by stopping worker groups before cleaning export workspaces.
+- Require local Python 3 for POSIX render process isolation.
 - Protect the production capture HTTP boundary with a persistent injected-request regression.
 - Block new Dart HTTP connections during desktop capture, including real-async work.
 - Verify synthetic source metadata is absent from encoded video and cover in CLI regression tests.

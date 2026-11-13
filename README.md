@@ -24,7 +24,8 @@ formats remain [roadmap work](docs/roadmap.md).
 
 Prerequisites: a local Flutter SDK, Python 3 and FFmpeg with libx264/AAC.
 Use the SDK pinned in the [Quality workflow](.github/workflows/quality.yml).
-The CLI neither bundles nor downloads FFmpeg. Start with synthetic content:
+Python is also used to isolate POSIX render workers. The CLI neither bundles
+nor downloads FFmpeg. Start with synthetic content:
 
 ```sh
 git clone https://github.com/moisesaguiarjunior/social-studio.git
@@ -89,6 +90,7 @@ manifest contract. The review page plays the actual export; it is not an editor.
 | Local JSON-to-MP4 desktop rendering | Implemented: [CLI guide](flutter/social_studio/README.md) |
 | One photo or a sequence, slow zoom and hard cuts | Implemented: [sequence example](flutter/social_studio/README.md#render-a-sequence-of-photos) |
 | Supplied captions, local audio, cover and review page | Implemented: [export review](flutter/social_studio/README.md#review-and-use-the-export) |
+| SIGINT/SIGTERM render cancellation | Implemented for Linux/macOS: [cleanup and limits](flutter/social_studio/README.md#cancel-a-render) |
 | General platform profiles and catalog schemas | Validated data: [specification](spec/README.md); catalog-to-renderer adapter pending |
 | Android/iOS rendering, sharing and performance | Pending acceptance: [evaluation](docs/evaluation.md) |
 | Reel, TikTok, Shorts, feed and horizontal video rendering | Planned: [execution roadmap](docs/roadmap.md) |

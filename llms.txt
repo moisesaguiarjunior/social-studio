@@ -12,6 +12,7 @@
 ## Use and integrate
 
 - [Desktop CLI guide](flutter/social_studio/README.md): Local Story input, rendering, sequences, outputs and boundaries.
+- [Cancel a desktop render](flutter/social_studio/README.md#cancel-a-render): POSIX interrupt handling, cleanup and limits.
 - [Specification guide](spec/README.md): General v0 catalog and the separate desktop authoring contract.
 - [Reuse map](docs/reuse.md): Existing solutions and real consumers.
 - [Architecture decisions](docs/decisions/): Technical decisions with status, context and evidence.

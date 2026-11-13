@@ -15,6 +15,7 @@ multi-platform engine is the destination; see the roadmap for unfinished work.
 | Find the next implementation milestone | [Execution roadmap](roadmap.md) |
 | Assess rendering quality, determinism or mobile readiness | [Evaluation](evaluation.md), [phase 1 spike](phase1-spike.md) and [render validation](verification/render-validation.md) |
 | Check privacy protections and their limits | [Desktop boundaries](../flutter/social_studio/README.md#boundaries), [privacy checks](verification/privacy.md) and [desktop verification](verification/desktop-story.md) |
+| Cancel a desktop render and understand cleanup | [Cancellation guide](../flutter/social_studio/README.md#cancel-a-render) and [verification](verification/cancellation.md) |
 | Run checks or understand coverage | [Repository gates](verification/repository-gates.md) and [coverage](verification/coverage.md) |
 | Reuse an implementation or review a design choice | [Reuse map](reuse.md) and [architecture decisions](decisions/) |
 | Check platform rules or dependency licensing | [Platform research](platform-requirements.md) and [dependency inventory](dependencies.md) |
@@ -43,6 +44,7 @@ Use these terms with repository search or `rg`. Paths are relative to the root.
 | `StoryJob`, local assets, caption timing, media integrity, snapshot | `flutter/social_studio/lib/src/story_job.dart` |
 | `buildStory`, photo sequence, Ken Burns, hard cuts | `flutter/social_studio/lib/src/story_composition.dart` |
 | `buildStoryReview`, review HTML, seek, SRT | `flutter/social_studio/lib/src/story_review.dart` |
+| `RenderProcesses`, SIGINT, SIGTERM, cancellation, worker groups | `flutter/social_studio/lib/src/render_processes.dart`, `flutter/social_studio/tool/run_process.py` |
 | `runOffline`, HTTP, network boundary | `flutter/social_studio/lib/src/offline_rendering.dart`, `flutter/social_studio/tool/capture_story.dart` |
 | `maximum_duration_seconds`, platform limits, schema validation | `spec/platform-profiles/`, `spec/tool/validate_spec.py` |
 | hooks, independent review, format, strict analysis | `tool/check.sh`, `tool/hooks/`, `CONTRIBUTING.md` |

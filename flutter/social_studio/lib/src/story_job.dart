@@ -87,8 +87,10 @@ final class StoryJob {
 
   /// Loads and validates a job before any capture or encoder process starts.
   ///
-  /// Throws [StoryJobException] for schema, timing or media failures. Schemas
-  /// are constructed synchronously, so remote references cannot be fetched.
+  /// Throws [StoryJobException] for JSON, schema, timing or media failures.
+  /// Malformed JSON diagnostics do not include input excerpts. File read errors
+  /// may propagate as [FileSystemException]. Schemas are constructed
+  /// synchronously, so remote references cannot be fetched.
   static StoryJob load(String jobPath, {required String specDirectory}) {
     final data = _object(File(jobPath).readAsStringSync());
     final spec = Directory(specDirectory);
@@ -286,7 +288,14 @@ int captionFrame(int milliseconds, int fps) =>
     (milliseconds / 1000 * fps).round();
 
 Map<String, Object?> _object(String source) {
-  final Object? decoded = jsonDecode(source);
+  final Object? decoded;
+  try {
+    decoded = jsonDecode(source);
+  } on FormatException {
+    // Decoder diagnostics include source excerpts. Keep the public input
+    // failure typed and content-free, like the other validation failures.
+    throw const StoryJobException('Expected a valid JSON object.');
+  }
   if (decoded is! Map<String, Object?>) {
     throw const StoryJobException('Expected a JSON object.');
   }

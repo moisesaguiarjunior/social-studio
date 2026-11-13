@@ -41,3 +41,29 @@ job so a broken integration is visible. Quality remains the repository gate.
 The README badge points at this repository, not the Fluvie fork. The first
 successful upload and the badge's live percentage require remote verification;
 a local LCOV file alone cannot establish either.
+
+## Contract coverage increment
+
+The next roadmap increment keeps the same collector, exclusions and denominator
+rules. The local baseline on merged PR #14 was 242/276 library lines (87.68%).
+Adding the process runner initially measured 308/354 (87.01%); targeted contract
+regressions then measured 344/355 (96.90%). The denominator grew with production
+code; no files or unsupported branches were excluded to obtain the increase.
+
+Added controls cover frozen-job snapshot replay after source job/schema/config
+changes, media rebasing through a symbolic alias, actual synthetic JPEG input,
+non-object/malformed JSON, fractional scene lengths and frame navigation,
+unknown review-template slots and real signal delivery.
+Existing CLI/subprocess integration controls remain in place. A separate safety
+listener keeps the test VM alive if the runner's signal handler regresses.
+
+The malformed-JSON test initially failed with a FormatException exposing a
+synthetic input excerpt. The loader now returns the documented typed,
+content-free StoryJobException. Snapshot caption substitution, silent unknown
+slot replacement and truncated fractional labels each fail the new tests in
+disposable mutation controls. These are behavior assertions, not getter counts.
+
+The remaining uncovered library paths include Windows execution and defensive
+internal-state checks. Native/Windows behavior and Python/CLI subprocess code
+are not certified by the line percentage. The policy remains informational:
+no hard-coded percentage, new threshold or special exclusion was added.
