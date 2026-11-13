@@ -9,7 +9,7 @@ void main() {
     test(
       mutateMedia
           ? 'replacing valid media during render rejects the export'
-          : 'editing the source after validation cannot change captured job',
+          : 'frozen capture preserves the job and strips source metadata',
       () async {
         final temp = Directory.systemTemp.createTempSync('frozen-story-');
         addTearDown(() => temp.deleteSync(recursive: true));
@@ -63,17 +63,22 @@ void main() {
           expect(result.exitCode, 0, reason: '${result.stderr}');
         }
 
-        for (final color in ['red', 'blue']) {
-          await encode([
-            '-f',
-            'lavfi',
-            '-i',
-            'color=$color:s=16x16',
-            '-frames:v',
-            '1',
-            p.join(temp.path, '$color.png'),
-          ]);
-        }
+        await encode([
+          '-f',
+          'lavfi',
+          '-i',
+          'color=blue:s=16x16',
+          '-frames:v',
+          '1',
+          p.join(temp.path, 'blue.png'),
+        ]);
+        File('test/fixtures/tagged_red.png')
+            .copySync(p.join(temp.path, 'red.png'));
+        final imageBytes = latin1.decode(
+          File(p.join(temp.path, 'red.png')).readAsBytesSync(),
+        );
+        expect(imageBytes, contains('SyntheticPhotoDevice'));
+        expect(imageBytes, contains('SyntheticPhotoLocation'));
         await encode([
           '-f',
           'lavfi',
@@ -81,8 +86,36 @@ void main() {
           'anullsrc=r=8000:cl=mono',
           '-t',
           '1',
+          '-metadata',
+          'artist=SyntheticAudioDevice',
+          '-metadata',
+          'comment=SyntheticAudioLocation',
           p.join(temp.path, 'audio.wav'),
         ]);
+        final ffprobe =
+            Platform.environment['FFPROBE'] ??
+            (p.dirname(ffmpeg) == '.'
+                ? 'ffprobe'
+                : p.join(p.dirname(ffmpeg), 'ffprobe'));
+        Future<String> metadata(String path) async {
+          final result = await Process.run(ffprobe, [
+            '-v',
+            'error',
+            '-show_entries',
+            'format_tags:stream_tags',
+            '-of',
+            'json',
+            path,
+          ]);
+          expect(result.exitCode, 0, reason: '${result.stderr}');
+          final Object? tags = jsonDecode(result.stdout.toString());
+          expect(tags, isA<Map<String, Object?>>());
+          return jsonEncode(tags);
+        }
+
+        final inputTags = await metadata(p.join(temp.path, 'audio.wav'));
+        expect(inputTags, contains('SyntheticAudioDevice'));
+        expect(inputTags, contains('SyntheticAudioLocation'));
         final source = File(p.join(temp.path, 'job.json'));
         final original = <String, Object?>{
           'version': 1,
@@ -159,6 +192,20 @@ os.execvp(os.environ['TEST_FFMPEG'], [os.environ['TEST_FFMPEG'], *sys.argv[1:]])
           contains('Changed caption'),
           reason: 'The source really changed before capture',
         );
+        for (final name in ['story.mp4', 'cover.png']) {
+          final path = p.join(output, name);
+          final tags = await metadata(path);
+          final bytes = latin1.decode(File(path).readAsBytesSync());
+          for (final marker in [
+            'SyntheticPhotoDevice',
+            'SyntheticPhotoLocation',
+            'SyntheticAudioDevice',
+            'SyntheticAudioLocation',
+          ]) {
+            expect(tags, isNot(contains(marker)), reason: '$name decoded tags');
+            expect(bytes, isNot(contains(marker)), reason: '$name payload');
+          }
+        }
         final html = File(p.join(output, 'review.html')).readAsStringSync();
         expect(html, contains('Original caption'));
         expect(html, isNot(contains('Scene 2')));

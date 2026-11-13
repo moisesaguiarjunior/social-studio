@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluvie/rendering.dart';
 import 'package:path/path.dart' as p;
+import 'package:social_studio/src/offline_rendering.dart';
 import 'package:social_studio/src/story_composition.dart';
 import 'package:social_studio/src/story_job.dart';
 
@@ -25,30 +26,32 @@ Future<void> main() async {
   final transcript = File(p.join(output.path, 'captions.srt'));
   await transcript.writeAsString(job.toSrt());
   testWidgets('captures the validated Story job', (tester) async {
-    final scope = resolverScope(
-      null,
-      networkAllowlist: const NetworkAllowlist(hosts: {}),
-    );
-    addTearDown(scope.dispose);
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final video = buildStory(job, transcriptPath: transcript.path);
-    await renderVideo(
-      video: video,
-      outDir: output,
-      // Upstream 0.3.1 skips pumping cache hits. This host counts every
-      // pump, so keep caching off until the reviewed fork is adopted.
-      cacheEnabled: false,
-      resolver: scope.resolver,
-      defaultFontFamily: 'Roboto',
-      pumpWidget: tester.pumpWidget,
-      pumpFrame: captureFramePump(fps: video.fps, pump: tester.pump),
-      runAsync: tester.runAsync,
-      setViewSize: (width, height) {
-        tester.view.physicalSize = Size(width.toDouble(), height.toDouble());
-        tester.view.devicePixelRatio = 1;
-      },
-    );
+    await runOffline(() async {
+      final scope = resolverScope(
+        null,
+        networkAllowlist: const NetworkAllowlist(hosts: {}),
+      );
+      addTearDown(scope.dispose);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final video = buildStory(job, transcriptPath: transcript.path);
+      await renderVideo(
+        video: video,
+        outDir: output,
+        // Upstream 0.3.1 skips pumping cache hits. This host counts every
+        // pump, so keep caching off until the reviewed fork is adopted.
+        cacheEnabled: false,
+        resolver: scope.resolver,
+        defaultFontFamily: 'Roboto',
+        pumpWidget: tester.pumpWidget,
+        pumpFrame: captureFramePump(fps: video.fps, pump: tester.pump),
+        runAsync: tester.runAsync,
+        setViewSize: (width, height) {
+          tester.view.physicalSize = Size(width.toDouble(), height.toDouble());
+          tester.view.devicePixelRatio = 1;
+        },
+      );
+    });
   }, timeout: const Timeout(Duration(minutes: 10)));
 }
 

@@ -206,3 +206,86 @@ The old Fluvie lifecycle draft is now prominently marked as superseded by the
 later correction set. Its checker remains a historical reproduction and does
 not validate the replacement or adopt it. The PR scope description is kept in
 private Git metadata rather than public coordination documents.
+
+## Capture HTTP boundary and tagged-media CLI regression
+
+On 2026-11-13, the readiness increment was refreshed onto main `30ae55b`,
+preserving its frame-clock adapter, disabled capture cache and existing privacy
+argument checks. Capture additionally runs inside a Dart HTTP connection guard.
+The loopback unit control first completes a real local request, then proves a
+new guarded client cannot reach that endpoint after an asynchronous boundary.
+The prior zone is restored after failure and a subsequent local job succeeds.
+
+The actual CLI fixture marks its synthetic PNG with device/location text chunks,
+using the existing phase 0 chunk writer. Its WAVE artist/comment fields carry
+separate synthetic device/location canaries; ffprobe confirms those input tags
+exist. The CLI renders the fixture, and the regression checks stream/container
+metadata plus MP4 and cover bytes for absence of all four canaries. This extends
+the encoder-argument tests in [privacy verification](privacy.md) through the
+real CLI and capture path. It is not an exhaustive EXIF/XMP sanitizer test.
+
+Disposable controls on the refreshed base:
+
+- Enabling metadata copying in the canonical `storyVideoArguments` causes the
+  CLI regression to fail on `SyntheticAudioDevice` in MP4 decoded tags.
+- Injecting an HTTP attempt inside the actual capture `tester.runAsync`
+  callback produces the typed offline error. The CLI fails without a final
+  output directory and removes staging. Removing the enclosing boundary makes
+  that intentional rejection assertion fail.
+- Reading the pinned Flutter binding and Dart SDK confirmed that `runAsync`
+  forks the current zone and retains HTTP overrides. A second inner guard was
+  therefore unnecessary and was removed rather than recorded as a requirement.
+
+`bash tool/coverage.sh` passed all 51 desktop tests and measured 242/276
+executed library lines (87.68%). Coverage is limited to library files loaded by
+the tests; subprocesses, historical probes and native behavior are outside the
+report. No coverage percentage gate was added. See [coverage scope](coverage.md).
+
+Software: Flutter 3.47.9, Dart 3.13.7, Python 3.10.20, FFmpeg 8.1.2.
+The new boundary does not intercept earlier clients, raw sockets, deliberate
+reconfiguration, native plugins or subprocess networking. Phone, browser and
+remote CI/Codecov execution remain unverified by these local controls.
+
+On this refreshed implementation, `bash tool/check.sh` exited 0: 55 hook
+scenarios, three coverage-tool tests, 61 schema tests and 74 Flutter tests
+(51 desktop, six phase 0, seventeen phase 1). Formatting, strict analysis,
+`git diff --check` and local documentation target checks passed. Independent
+review reran 22 focused clock/privacy/HTTP/CLI tests plus the coverage-tool suite
+and reported no blocking findings. This records working-tree verification;
+exact-commit publication attestation is maintained separately in private Git
+metadata, as required by the contribution policy.
+
+## PR #14 review follow-up — persistent capture-boundary regression
+
+SS14-1 identified that the earlier HTTP injection evidence was disposable: the
+regular suite could still pass after removing the production capture scope.
+`test/capture_http_boundary_test.dart` now starts a subprocess that imports and
+runs the actual `tool/capture_story.dart` entry point. Its test-only widget
+binding injects an HTTP attempt inside each Fluvie real-async callback and
+requires `OfflineRenderException`. The production capture file is not rewritten
+or replaced. The parent also checks complete raw frames and supplied captions
+for a small synthetic job, so an unused callback or skipped capture cannot pass.
+
+The regression passed with the existing scope. In a disposable checkout,
+removing only that scope caused the persistent test to fail at its injected
+request assertion: the expected offline exception was replaced by Flutter's
+mock request. This was not a compilation, missing-tool or unrelated-input
+failure. An independent reviewer repeated both the valid run and that mutation
+with the same result. Temporary copies were removed.
+
+The tagged-photo input is now a documented, checked-in synthetic fixture shared
+by the capture and CLI tests. The CLI regression checks both photo canaries at
+input and continues checking the video and cover. It no longer executes a
+historical probe generator. No existing visual reference was regenerated.
+
+`bash tool/check.sh` passed: 55 hook scenarios, three coverage-tool tests,
+61 schema tests and 75 Flutter tests (52 desktop, six phase 0, seventeen phase 1).
+Formatting and strict analysis were clean. The README's inline JSON example
+passed the real CLI validator with synthetic files; changed local document links
+and heading anchors and `git diff --check` passed. Software remains Flutter
+3.47.9, Dart 3.13.7, Python 3.10.20 and FFmpeg 8.1.2.
+
+The [README review](readme-discovery.md) records factual/navigation findings and
+applied corrections. Search rankings, AI citations, browser/badge display and
+mobile execution were not measured by these local checks. Native/network
+sandbox limits from decision 0009 remain unchanged.

@@ -83,3 +83,11 @@ copying.
 
 `docs/verification/privacy.md` lists the native paths these desktop checks do
 not observe. The phase 0 network row is unchanged. This is not phone acceptance.
+
+The capture host also denies connections from new Dart HTTP clients throughout
+capture, beyond the resolver's media path. The pinned Flutter real-async callback
+preserves the same zone. A working loopback control proves requests are blocked
+before reaching the server. The actual CLI regression additionally checks that
+synthetic PNG/WAVE source canaries are absent from its MP4 and cover, extending
+the existing encoder-argument metadata control. Existing clients, raw sockets,
+native plugins and phone encoders remain outside this guard. See decision 0009.
