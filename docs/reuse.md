@@ -13,11 +13,7 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Validate a platform profile, a template, and a render job | `validate_spec.py` | `spec/tool/validate_spec.py` | `spec/tool/test_validate_spec.py`, `check_spec` |
 | Decide whether changed paths need the schema suite | `spec_checks_required` | `tool/hooks/lib.sh` | staged pre-commit and every unpublished pre-push commit |
 | Run the schema suite, and fail if schemas exist without it | `check_spec` (isolated stdin) | `tool/hooks/lib.sh` | hooks and `tool/check.sh` |
-| Reject remote image, video, audio, font and transcript references before access | `rejectRemoteReference`, shared by job loading, font reading and caption compilation | `flutter/social_studio/lib/src/story_job.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
-| Detect an intentional network fetch | Fluvie `NetworkAllowlist` with no hosts, applied by `resolverScope` | `flutter/social_studio/tool/capture_story.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
-| Strip copied location and device metadata | `storyDiscardedMetadataArguments` on the desktop encode and cover commands | `flutter/social_studio/lib/src/story_encode.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
-
-| Visual regression for the phase 0 scene | Flutter `matchesGoldenFile` against the existing reviewed PNGs; no second image comparator | `probes/phase0/test/determinism_test.dart` | Frames 0 and 59 in the determinism probe |
+| Visual regression for the phase 0 scene | Flutter `matchesGoldenFile` against `probes/phase0/test/goldens/`; `probes/phase0/evidence/` stays historical; exact pixels and no second comparator | `probes/phase0/test/determinism_test.dart` | Frames 0 and 59, tag `golden`, on the Linux gate |
 | Read encoded presentation times | `frame_pts_ms` and `frame_spacing_ms` over FFmpeg metadata | `probes/phase1/tool/inspect_story.py` | Flash, tone and observed frame spacing |
 | Validate draft upstream capture fixes | Disposable package copies plus baseline/patched assertions | `probes/phase1/tool/check_upstream_capture.py` | `probes/phase1/test/upstream_patch_test.dart` |
 | Validate local Story jobs | Synchronous `json_schema` plus semantic time/file checks | `flutter/social_studio/lib/src/story_job.dart`, `spec/desktop-story/` | Desktop CLI and composition compiler |
@@ -30,3 +26,6 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Freeze validated render input | `StoryJob.writeSnapshot` with rebased media references and validated configuration | `flutter/social_studio/lib/src/story_job.dart` | Desktop CLI capture subprocess |
 | Detect changed render media | Existing `crypto` SHA-256 in bounded chunks, retained by validated `StoryJob` | `flutter/social_studio/lib/src/story_job.dart` | CLI before capture and final directory rename |
 | Check desktop platform projections | `desktop_story_limit_errors`, reusing the v0 duration conversion | `spec/tool/validate_spec.py` | Schema suite invoked by repository and staged spec checks |
+| Reject remote image, video, audio, font and transcript references before access | `rejectRemoteReference`, shared by job loading, font reading and caption compilation | `flutter/social_studio/lib/src/story_job.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
+| Detect an intentional network fetch | Fluvie `NetworkAllowlist` with no hosts, applied by `resolverScope` | `flutter/social_studio/tool/capture_story.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
+| Strip copied location and device metadata | `storyDiscardedMetadataArguments` on the desktop encode and cover commands | `flutter/social_studio/lib/src/story_encode.dart` | `flutter/social_studio/test/privacy_boundary_test.dart` |
