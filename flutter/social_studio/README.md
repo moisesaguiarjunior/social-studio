@@ -138,6 +138,9 @@ The regression captures a native Flutter ticker and reads its exact elapsed
 microseconds from raw pixels; it does not compare platform-dependent fonts.
 
 This is a sequential desktop capture contract, not seek or rewind support.
+Production capture explicitly sets `cacheEnabled: false`: upstream 0.3.1
+skips the pump on a cache hit, which would invalidate the host's counter.
+Keep that setting until the reviewed fork's cache behavior is adopted.
 It works with the existing Fluvie 0.3.1 dependency and does not adopt or pin
 the separate fork's frame-cache changes. Those require their own reviewed
 integration. The generated Fluvie CLI harness cannot import this checkout's

@@ -5,6 +5,9 @@
 /// zero. Later durations are differences of rounded absolute timestamps, so
 /// fractional frame periods never accumulate rounding error.
 ///
+/// Callers using Fluvie 0.3.1 must disable the frame cache: cache hits skip
+/// this callback and would leave its sequential counter behind.
+///
 /// The host owns scheduler advancement. This does not seek or rewind tickers.
 /// Throws [ArgumentError] for a non-positive frame rate.
 Future<void> Function() captureFramePump({

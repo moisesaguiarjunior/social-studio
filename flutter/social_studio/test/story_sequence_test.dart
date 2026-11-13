@@ -109,6 +109,9 @@ Future<void> main() async {
     final manifest = await renderVideo(
       video: video,
       outDir: out,
+      // Upstream 0.3.1 skips pumping cache hits. This host counts every
+      // pump, so keep caching off until the reviewed fork is adopted.
+      cacheEnabled: false,
       resolver: scope.resolver,
       defaultFontFamily: 'Roboto',
       pumpWidget: tester.pumpWidget,
