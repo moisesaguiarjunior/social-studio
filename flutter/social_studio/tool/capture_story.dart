@@ -7,6 +7,8 @@ import 'package:path/path.dart' as p;
 import 'package:social_studio/src/story_composition.dart';
 import 'package:social_studio/src/story_job.dart';
 
+import 'capture_frame_pump.dart';
+
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   final jobPath = _environment('SOCIAL_STUDIO_JOB');
@@ -30,13 +32,14 @@ Future<void> main() async {
     addTearDown(scope.dispose);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
+    final video = buildStory(job, transcriptPath: transcript.path);
     await renderVideo(
-      video: buildStory(job, transcriptPath: transcript.path),
+      video: video,
       outDir: output,
       resolver: scope.resolver,
       defaultFontFamily: 'Roboto',
       pumpWidget: tester.pumpWidget,
-      pumpFrame: () => tester.pump(),
+      pumpFrame: captureFramePump(fps: video.fps, pump: tester.pump),
       runAsync: tester.runAsync,
       setViewSize: (width, height) {
         tester.view.physicalSize = Size(width.toDouble(), height.toDouble());

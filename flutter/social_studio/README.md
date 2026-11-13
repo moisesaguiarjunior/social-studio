@@ -127,3 +127,19 @@ editing, transition effects, music selection and mobile sharing remain roadmap w
 
 Both use the canonical spec supplied by the checkout. Run `bash tool/check.sh`
 from the repository root for formatting, analysis and tests.
+
+## Capture time
+
+The desktop host advances Flutter time at the compiled video's FPS, starting
+with zero elapsed time for frame zero. `captureFramePump` derives each pump
+interval from rounded absolute timestamps, so rates such as 29 FPS do not
+accumulate interval-rounding drift. Each render creates its own pump closure.
+The regression captures a native Flutter ticker and reads its exact elapsed
+microseconds from raw pixels; it does not compare platform-dependent fonts.
+
+This is a sequential desktop capture contract, not seek or rewind support.
+It works with the existing Fluvie 0.3.1 dependency and does not adopt or pin
+the separate fork's frame-cache changes. Those require their own reviewed
+integration. The generated Fluvie CLI harness cannot import this checkout's
+host adapter; its self-contained timing must remain compatible with projects
+using the published SDK.

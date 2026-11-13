@@ -1,3 +1,9 @@
+# Unreleased
+
+- Advance the desktop scheduler at the video's FPS, with frame zero at zero
+  and no accumulated rounding drift. Test native ticker elapsed time in the
+  actual raw-frame capture pipeline. Keep the current Fluvie dependency.
+
 # 0.1.0
 
 - Add versioned local Story jobs, schema validation and a photo/caption compiler.
