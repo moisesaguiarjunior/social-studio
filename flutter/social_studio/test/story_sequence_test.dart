@@ -8,6 +8,8 @@ import 'package:fluvie/rendering.dart';
 import 'package:social_studio/rendering.dart';
 import 'package:social_studio/social_studio.dart';
 
+import '../tool/capture_frame_pump.dart';
+
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   final loader = FontLoader('Roboto')
@@ -103,13 +105,14 @@ Future<void> main() async {
     );
     addTearDown(scope.dispose);
     final out = Directory('${directory.path}/frames')..createSync();
+    final video = buildStory(job, transcriptPath: transcript.path);
     final manifest = await renderVideo(
-      video: buildStory(job, transcriptPath: transcript.path),
+      video: video,
       outDir: out,
       resolver: scope.resolver,
       defaultFontFamily: 'Roboto',
       pumpWidget: tester.pumpWidget,
-      pumpFrame: () => tester.pump(),
+      pumpFrame: captureFramePump(fps: video.fps, pump: tester.pump),
       runAsync: tester.runAsync,
       setViewSize: (width, height) {
         tester.view.physicalSize = Size(width.toDouble(), height.toDouble());
