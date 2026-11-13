@@ -12,8 +12,8 @@ or published package is required.
 
 ## Run the synthetic example
 
-Prerequisites: Flutter/Dart as pinned by repository CI, Python for the existing
-asset generator, and an installed FFmpeg with the libx264 and AAC encoders.
+Prerequisites: Flutter/Dart as pinned by repository CI, Python 3 (also required
+for POSIX render process groups), and an installed FFmpeg with the libx264 and AAC encoders.
 FFmpeg remains a separate developer process under decision 0002; nothing
 is downloaded during rendering.
 
@@ -107,6 +107,21 @@ is extracted from the encoded output. Source metadata is not forwarded:
 photo pixels are decoded/rasterized, and FFmpeg maps only the selected video
 and audio streams with metadata/chapter copying disabled.
 
+## Cancel a render
+
+On Linux/macOS, press Ctrl-C (SIGINT) or send SIGTERM to the CLI. It requests
+worker-group termination, escalates to SIGKILL after two seconds, waits for the
+command/pipes and group shutdown, then removes staging, frames and snapshots.
+Worker temporary files are placed inside that frame workspace. Repeated
+interrupts do not restart that grace period. Cancellation exits with status 130 for SIGINT
+or 143 for SIGTERM; a normal tool error remains a failure, not cancellation.
+
+A cancelled export is not published. Once the atomic final-directory rename
+begins, the completed export is retained. Existing output directories are still
+never overwritten. SIGKILL, power loss and programs that detach into another
+session can escape handled cleanup. Windows tree cancellation and native mobile
+interruptions are not implemented. See [cancellation evidence](../../docs/verification/cancellation.md).
+
 ## Boundaries
 
 This is a checkout-based desktop developer tool, not a published SDK or an
@@ -121,8 +136,9 @@ creation but rejects connection attempts before opening a socket. Existing
 clients and raw sockets are outside this guard.
 Synthetic location and device tags are checked on the decoded output. These controls are
 for this fixed job path; there is no OS-level sandbox for arbitrary code,
-network filesystems or native plugins. Forced termination may leave temporary
-files; ordinary capture/encode failures clean staging and expose no final output.
+network filesystems or native plugins. Unhandled termination may leave temporary
+files; ordinary capture/encode failures and handled POSIX interrupts clean staging
+and expose no final output before publication begins.
 
 No actual Instagram share, phone benchmark or platform acceptance is certified.
 The format covers a photo sequence and supplied captions; general template

@@ -171,3 +171,13 @@ pin. It is an MIT-licensed CI-only upload tool, not a distributed renderer
 dependency. [Source and license](https://github.com/codecov/codecov-action)
 checked 2026-11-13. Uploads contain line coverage, not rendered content. The
 workflow uses OIDC and does not run as part of rendering.
+
+## POSIX render process launcher
+
+The desktop CLI now also invokes the locally installed Python 3 runtime to
+create an owned POSIX session before starting a capture/encoder command.
+`tool/run_process.py` uses only `os` and `sys`; it downloads and bundles nothing.
+Python is an external developer runtime under PSF-2.0, not a GPL dependency or
+an app binary. Its incorporated components retain their own notices in that
+installation. [Python licensing](https://docs.python.org/3/license.html), checked
+2026-11-13. No new Dart package or lockfile version is introduced.

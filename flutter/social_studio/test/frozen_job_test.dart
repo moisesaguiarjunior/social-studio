@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
+import 'support/desktop_checkout.dart';
+
 void main() {
   for (final mutateMedia in [false, true]) {
     test(
@@ -13,46 +15,7 @@ void main() {
       () async {
         final temp = Directory.systemTemp.createTempSync('frozen-story-');
         addTearDown(() => temp.deleteSync(recursive: true));
-        final package = Directory(p.join(temp.path, 'flutter/social_studio'))
-          ..createSync(recursive: true);
-        void copyTree(Directory source, Directory destination) {
-          destination.createSync(recursive: true);
-          for (final entry in source.listSync()) {
-            final target = p.join(destination.path, p.basename(entry.path));
-            if (entry is Directory) copyTree(entry, Directory(target));
-            if (entry is File) {
-              entry.copySync(target);
-            }
-          }
-        }
-
-        for (final name in ['bin', 'lib', 'tool', 'assets']) {
-          copyTree(Directory(name), Directory(p.join(package.path, name)));
-        }
-        for (final name in ['pubspec.yaml', 'pubspec.lock']) {
-          File(name).copySync(p.join(package.path, name));
-        }
-        Directory(p.join(package.path, '.dart_tool')).createSync();
-        for (final name in ['package_config.json', 'package_graph.json']) {
-          File('.dart_tool/$name')
-              .copySync(p.join(package.path, '.dart_tool', name));
-        }
-        final spec = Directory(p.join(temp.path, 'spec/desktop-story'));
-        copyTree(Directory('../../spec/desktop-story'), spec);
-        final profile = File(p.join(spec.path, 'story-profile.json'));
-        final Object? decoded = jsonDecode(profile.readAsStringSync());
-        if (decoded is! Map<String, Object?>) {
-          throw StateError('Expected profile');
-        }
-        profile.writeAsStringSync(
-          jsonEncode({...decoded, 'width': 96, 'height': 160}),
-        );
-        final font = File(
-          p.join(temp.path, 'probes/phase0/assets/Roboto-Regular.ttf'),
-        );
-        font.parent.createSync(recursive: true);
-        File('../../probes/phase0/assets/Roboto-Regular.ttf')
-            .copySync(font.path);
+        final package = createDesktopCheckout(temp);
         final ffmpeg = Platform.environment['FLUVIE_FFMPEG'] ?? 'ffmpeg';
         Future<void> encode(List<String> arguments) async {
           final result = await Process.run(ffmpeg, [

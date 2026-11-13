@@ -40,14 +40,14 @@ void main() {
   });
   tearDown(() => directory.deleteSync(recursive: true));
 
-  String page() {
+  String page({String? source}) {
     final file = File('${directory.path}/job.json')
       ..writeAsStringSync(jsonEncode(data));
     final job = StoryJob.load(
       file.path,
       specDirectory: '../../spec/desktop-story',
     );
-    return buildStoryReview(job, template: template);
+    return buildStoryReview(job, template: source ?? template);
   }
 
   test('review navigation uses scene offsets and quantized caption frames', () {
@@ -78,6 +78,42 @@ void main() {
     expect(RegExp('<script>').allMatches(html).length, 1);
     expect(RegExp('</script>').allMatches(html).length, 1);
   });
+
+  test('fractional scene lengths retain exact frame navigation', () {
+    data['scenes'] = [
+      {'image': 'photo.png', 'durationMs': 2500},
+      {'image': 'photo.png', 'durationMs': 9500},
+    ];
+    final html = page();
+    expect(html, contains('data-start-frame="0" data-end-frame="75"'));
+    expect(html, contains('data-start-frame="75" data-end-frame="360"'));
+    final lengths = <double>[];
+    for (final match in RegExp(
+      r'<span class="length">([0-9.]+) s</span>',
+    ).allMatches(html)) {
+      final text = match.group(1);
+      if (text == null) fail('Missing scene duration.');
+      lengths.add(double.parse(text));
+    }
+    expect(lengths, [2.5, 9.5]);
+  });
+
+  test(
+    'an unknown review slot fails instead of publishing unresolved markup',
+    () {
+      expect(() => page(source: '{{WIDTH}}'), returnsNormally);
+      expect(
+        () => page(source: '{{UNSUPPORTED_SLOT}}'),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'template diagnostic',
+            contains('Unknown review template slot'),
+          ),
+        ),
+      );
+    },
+  );
 
   test(
     'result schema rejects incomplete exports and nonlocal artifact links',

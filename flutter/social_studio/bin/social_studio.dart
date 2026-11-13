@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:social_studio/src/render_processes.dart';
 import 'package:social_studio/src/story_encode.dart';
 import 'package:social_studio/src/story_job.dart';
 import 'package:social_studio/src/story_review.dart';
 
 Future<void> main(List<String> args) async {
+  RenderProcesses? processes;
   try {
     if (args.length < 2 || !{'validate', 'render'}.contains(args.first)) {
       stderr.writeln(
@@ -44,17 +46,26 @@ Future<void> main(List<String> args) async {
         'Output already exists; choose a new directory.',
       );
     }
+    final runner = RenderProcesses(
+      launcherPath: p.join(package.path, 'tool/run_process.py'),
+    );
+    processes = runner;
     final ffmpeg = Platform.environment['FLUVIE_FFMPEG'] ?? 'ffmpeg';
-    await _run(ffmpeg, ['-version']);
+    await runner.run(ffmpeg, ['-version']);
     await destination.parent.create(recursive: true);
     final staging = await destination.parent.createTemp('.social-studio-');
     Directory? frames;
     try {
       frames = await Directory.systemTemp.createTemp('social-studio-frames-');
       job.verifyMediaUnchanged();
+      final workerEnvironment = <String, String>{
+        'TMPDIR': frames.path,
+        'TMP': frames.path,
+        'TEMP': frames.path,
+      };
       final snapshotDirectory = p.join(frames.path, 'snapshot');
       final snapshotJob = job.writeSnapshot(snapshotDirectory);
-      await _run(
+      await runner.run(
         'flutter',
         [
           'test',
@@ -65,6 +76,7 @@ Future<void> main(List<String> args) async {
         ],
         cwd: package.path,
         environment: {
+          ...workerEnvironment,
           'FLUTTER_SUPPRESS_ANALYTICS': 'true',
           'SOCIAL_STUDIO_JOB': snapshotJob,
           'SOCIAL_STUDIO_SPEC': snapshotDirectory,
@@ -83,7 +95,7 @@ Future<void> main(List<String> args) async {
         throw StateError('Capture frame count does not match the job.');
       }
       final videoPath = p.join(staging.path, 'story.mp4');
-      await _run(
+      await runner.run(
         ffmpeg,
         storyVideoArguments(
           width: width,
@@ -94,15 +106,17 @@ Future<void> main(List<String> args) async {
           durationMs: job.durationMs,
           outputPath: videoPath,
         ),
+        environment: workerEnvironment,
       );
       final coverFrame = job.coverMs * fps ~/ 1000;
-      await _run(
+      await runner.run(
         ffmpeg,
         storyCoverArguments(
           videoPath: videoPath,
           coverFrame: coverFrame,
           outputPath: p.join(staging.path, 'cover.png'),
         ),
+        environment: workerEnvironment,
       );
       if (!File(p.join(staging.path, 'cover.png')).existsSync()) {
         throw StateError('No cover frame produced.');
@@ -118,38 +132,28 @@ Future<void> main(List<String> args) async {
         throw const StoryJobException('Output appeared during render.');
       }
       job.verifyMediaUnchanged();
+      // Give interrupts queued during synchronous integrity hashing a turn
+      // before committing the completed export.
+      await Future<void>.delayed(Duration.zero);
+      runner.throwIfCancelled();
       await staging.rename(destination.path);
       stdout.writeln(
         'Rendered story.mp4 and cover.png. Open review.html to review.',
       );
     } finally {
-      if (staging.existsSync()) await staging.delete(recursive: true);
-      if (frames != null) await frames.delete(recursive: true);
+      try {
+        if (staging.existsSync()) await staging.delete(recursive: true);
+      } finally {
+        if (frames != null) await frames.delete(recursive: true);
+      }
     }
+  } on RenderCancelledException catch (error) {
+    stderr.writeln(error);
+    exitCode = error.exitCode;
   } on Object catch (error) {
     stderr.writeln(error);
     exitCode = 1;
-  }
-}
-
-Future<void> _run(
-  String command,
-  List<String> arguments, {
-  String? cwd,
-  Map<String, String>? environment,
-}) async {
-  final result = await Process.run(
-    command,
-    arguments,
-    workingDirectory: cwd,
-    environment: environment,
-  );
-  if (result.exitCode != 0) {
-    throw ProcessException(
-      command,
-      arguments,
-      '${result.stderr}\n${result.stdout}',
-      result.exitCode,
-    );
+  } finally {
+    await processes?.dispose();
   }
 }

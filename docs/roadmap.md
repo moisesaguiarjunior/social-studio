@@ -91,3 +91,17 @@ before reaching the server. The actual CLI regression additionally checks that
 synthetic PNG/WAVE source canaries are absent from its MP4 and cover, extending
 the existing encoder-argument metadata control. Existing clients, raw sockets,
 native plugins and phone encoders remain outside this guard. See decision 0009.
+
+## Step 4 progress — handled desktop cancellation
+
+The desktop CLI now handles SIGINT/SIGTERM through one process runner for
+preflight, capture, encode and cover extraction. It terminates the owned POSIX
+worker group, escalates resistant workers and waits before removing staging,
+raw frames, snapshots and worker temporary files. Tests interrupt every process
+phase and the real Flutter capture; normal encoded-output regressions remain.
+See [verification/cancellation.md](verification/cancellation.md) and decision 0010.
+
+This advances the desktop cancellation criterion only. Step 1 integration and
+ordinary-binding capture, a runnable app using the same contract, conformance
+reference frames and the phone acceptance gate remain open. Catalog convergence
+continues to follow decision 0005; no new platform renderer is claimed.

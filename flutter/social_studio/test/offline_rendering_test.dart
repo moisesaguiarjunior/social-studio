@@ -43,7 +43,13 @@ void main() {
             client.close(force: true);
           }
         }),
-        throwsA(isA<OfflineRenderException>()),
+        throwsA(
+          isA<OfflineRenderException>().having(
+            (error) => error.toString(),
+            'safe diagnostic',
+            isNot(contains(url.toString())),
+          ),
+        ),
       );
       expect(
         requests,
