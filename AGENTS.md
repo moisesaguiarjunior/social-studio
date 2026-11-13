@@ -4,6 +4,9 @@ Everything here is in English: code, docs, commits. Read [README.md](README.md) 
 
 This is a public repository: the bar is state-of-the-art, clean code. Everything pushed is public, including branches: **never push before an independent local review**. `main` is protected; changes enter through pull requests. Run `tool/install-hooks.sh` once; never bypass the hooks.
 
+Use [docs/README.md](docs/README.md) to find canonical contracts, implementation
+entry points and verification records by task.
+
 ## Before writing code
 
 1. Check `docs/reuse.md` and search the repository for an existing solution. Note what you searched.

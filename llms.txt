@@ -1,0 +1,26 @@
+# Social Studio
+
+> Open-source Flutter/Dart project for programmatic social video rendering. The desktop CLI turns local JSON Story jobs, photos, audio and supplied captions into MP4, a cover and an offline review page. Mobile and additional render targets remain roadmap work.
+
+## Start here
+
+- [Project overview and quick start](README.md): Current capabilities, installation, goals and limits.
+- [Documentation index](docs/README.md): Task navigation, canonical sources and code search terms.
+- [Contributor and agent instructions](AGENTS.md): Repository rules; read before changing code.
+- [Contribution standards](CONTRIBUTING.md): Design, testing and independent review requirements.
+
+## Use and integrate
+
+- [Desktop CLI guide](flutter/social_studio/README.md): Local Story input, rendering, sequences, outputs and boundaries.
+- [Specification guide](spec/README.md): General v0 catalog and the separate desktop authoring contract.
+- [Reuse map](docs/reuse.md): Existing solutions and real consumers.
+- [Architecture decisions](docs/decisions/): Technical decisions with status, context and evidence.
+
+## Readiness and evidence
+
+- [Execution roadmap](docs/roadmap.md): Ordered milestones and acceptance criteria.
+- [Evaluation](docs/evaluation.md): Engine selection and outstanding device acceptance.
+- [Desktop verification](docs/verification/desktop-story.md): Executed controls and unverified behavior.
+- [Coverage scope](docs/verification/coverage.md): Local collection, CI upload and measurement limits.
+- [Platform requirements](docs/platform-requirements.md): Research linked to official sources.
+- [Dependencies and licenses](docs/dependencies.md): Inventory and distribution constraints.

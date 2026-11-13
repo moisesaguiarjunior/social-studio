@@ -1,5 +1,8 @@
 # Unreleased
 
+- Block new Dart HTTP connections during desktop capture, including real-async work.
+- Verify synthetic source metadata is absent from encoded video and cover in CLI regression tests.
+
 - Explicitly disable capture caching while using the upstream SDK, whose
   cache hits skip the sequential host pump.
 

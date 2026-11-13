@@ -1,4 +1,7 @@
-# Spec
+# Social Studio JSON specification
+
+[Documentation index](../docs/README.md) · [Desktop Story contract](#desktop-story-contract) ·
+[Schema versioning decision](../docs/decisions/0003-schema-versioning.md)
 
 Language-neutral documents for every renderer. Schema v0 is JSON Schema draft 2020-12 (`https://json-schema.org/draft/2020-12/schema`). That draft is the current one, and it has `$defs`, `if`/`then`, and `additionalProperties`, which this set uses. The schemas are not Dart types. `$id` is a URN (`urn:social-studio:schema:v0:…`). No public domain is invented for it.
 

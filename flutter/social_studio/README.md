@@ -1,4 +1,9 @@
-# Social Studio desktop v0.1
+# Social Studio desktop CLI — local JSON-to-Story rendering
+
+[Project overview](../../README.md) · [Documentation index](../../docs/README.md) ·
+[Canonical desktop specification](../../spec/desktop-story/)
+
+Package version: 0.1.0 (unpublished).
 
 A runnable local workflow: a JSON job plus photos, audio and timed text become
 `story.mp4`, `cover.png`, `captions.srt`, `review.html` and `result.json`. This checkout tool uses Fluvie's
@@ -109,7 +114,11 @@ on-device renderer. It reuses the existing local Roboto fixture and license.
 The capture harness runs `flutter test --no-pub`, suppresses Flutter analytics
 and configures Fluvie's media allowlist with no permitted hosts. Tests detect
 an intentional image, video, audio or redirect fetch before a connection.
-The encoder accepts only file/pipe protocols for the local audio input.
+The encoder accepts only file/pipe protocols for the local audio input. A zone-scoped Dart
+HTTP connection guard covers new clients created during capture, including
+real-async callbacks under the pinned Flutter binding. It allows harmless client
+creation but rejects connection attempts before opening a socket. Existing
+clients and raw sockets are outside this guard.
 Synthetic location and device tags are checked on the decoded output. These controls are
 for this fixed job path; there is no OS-level sandbox for arbitrary code,
 network filesystems or native plugins. Forced termination may leave temporary

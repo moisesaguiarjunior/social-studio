@@ -1,19 +1,31 @@
-# Social Studio
+# Social Studio — Flutter social video rendering
 
-Turn app content into **finished, ready-to-post social media pieces with art direction**: Instagram Stories and feed posts, Reels, TikTok, YouTube Shorts and horizontal YouTube videos.
+[![Version: 0.1.0 (unpublished)](https://img.shields.io/badge/version-0.1.0%20%28unpublished%29-blue)](flutter/social_studio/CHANGELOG.md)
+[![CI](https://github.com/moisesaguiarjunior/social-studio/actions/workflows/quality.yml/badge.svg)](https://github.com/moisesaguiarjunior/social-studio/actions/workflows/quality.yml)
+[![Coverage](https://codecov.io/gh/moisesaguiarjunior/social-studio/graph/badge.svg)](https://codecov.io/gh/moisesaguiarjunior/social-studio)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-purple.svg)](LICENSE)
 
-Status: an initial [desktop Story workflow](flutter/social_studio/README.md) now
-renders a local JSON job to MP4, a cover and a local review page. It is checkout-based and unpublished;
-mobile adoption remains conditional (see `docs/evaluation.md`). Schema v0 and
-its catalog checks remain in `spec/`; this desktop tool consumes the narrower
-Story job contract documented in `spec/desktop-story/`.
+Social Studio (`social-studio`) is an open-source Flutter/Dart project for
+programmatic social media video generation. Its desktop CLI turns local photos,
+WAVE audio and supplied timed captions into an Instagram Story MP4, a cover
+image, SRT subtitles and an offline HTML review page. Rendering uses Fluvie;
+platform profiles, templates and render jobs are versioned JSON specifications.
 
-## Try the first Story workflow
+The longer-term goal is **finished, ready-to-post pieces with art direction**
+for Instagram Stories and feed posts, Reels, TikTok, YouTube Shorts and
+horizontal YouTube videos. These additional render targets remain roadmap work.
+
+[Quick start](#quick-start) · [Current capabilities](#current-capabilities) ·
+[Documentation](#documentation) · [Architecture](#architecture) ·
+[Roadmap](docs/roadmap.md) · [Contributing](CONTRIBUTING.md)
+
+## Quick start
 
 ```sh
 python3 probes/phase1/tool/generate_story_assets.py
 cd flutter/social_studio
 flutter pub get --enforce-lockfile
+dart run bin/social_studio.dart validate example/story.json
 dart run bin/social_studio.dart render example/story.json out/my-story
 ```
 
@@ -23,6 +35,32 @@ audio and timed caption fields in the JSON to render authorized local content.
 For several photos with individual durations, use the
 [sequence example](flutter/social_studio/README.md#render-a-sequence-of-photos).
 See [inputs, validation and limitations](flutter/social_studio/README.md).
+
+## Current capabilities
+
+| Capability | Status and entry point |
+| --- | --- |
+| Local JSON-to-MP4 rendering | Implemented for desktop: [CLI usage](flutter/social_studio/README.md) |
+| One photo or a photo sequence, slow zoom and hard cuts | Implemented: [sequence example](flutter/social_studio/README.md#render-a-sequence-of-photos) |
+| Supplied captions, local audio, cover and review page | Implemented: [export artifacts](flutter/social_studio/README.md#review-and-use-the-export) |
+| Platform profiles and general catalog schemas | Validated data: [specification](spec/README.md); general catalog rendering is pending |
+| Android/iOS rendering, sharing and performance | Pending device acceptance: [evaluation](docs/evaluation.md) |
+| Reel, TikTok, Shorts, feed and horizontal video rendering | Planned after the device gate: [roadmap](docs/roadmap.md) |
+
+This is a checkout-based developer tool, version 0.1.0, not a pub.dev release.
+The coverage badge reports the desktop package's library tests, not phone
+coverage, the probes or complete subprocess execution. It needs a successful
+Codecov upload before it can display a percentage.
+
+## Documentation
+
+Start with the [documentation index](docs/README.md) for task-based navigation,
+canonical contracts and a search map for people and coding assistants.
+
+- **Use the CLI:** [desktop guide and API surfaces](flutter/social_studio/README.md).
+- **Understand the formats:** [JSON Schema contracts](spec/README.md).
+- **Assess readiness:** [execution roadmap](docs/roadmap.md) and [desktop verification](docs/verification/desktop-story.md).
+- **Contribute safely:** [contribution standards](CONTRIBUTING.md), [reuse map](docs/reuse.md) and [technical decisions](docs/decisions/).
 
 ## Goals
 
@@ -136,3 +174,8 @@ newly published commit before push. Tool/workflow changes also run hook
 regressions, and `spec/` changes run the schema tests, even when no package
 owns the file. Independent local review is still required before any branch
 is pushed. See [verification and limits](docs/verification/repository-gates.md).
+
+Collect desktop library coverage with `bash tool/coverage.sh`. The separate
+[Coverage workflow](.github/workflows/coverage.yml) uploads the LCOV report to
+Codecov; it does not replace the Quality checks or impose a percentage gate.
+See [coverage scope and setup](docs/verification/coverage.md).

@@ -162,3 +162,12 @@ list; it does not retrospectively change that evaluation result.
 The desktop package directly uses the existing `crypto` 3.0.8 (BSD-3-Clause)
 for streamed SHA-256 input-integrity checks. The version and license are already
 inventoried above; no additional binary or package version is introduced.
+
+## Coverage CI action
+
+`codecov/codecov-action` v7.1.1 is pinned to
+`303a32d7a59b442fa8d48b6a1cc6825c09c847a5`, following the maintained Fluvie fork's
+pin. It is an MIT-licensed CI-only upload tool, not a distributed renderer
+dependency. [Source and license](https://github.com/codecov/codecov-action)
+checked 2026-11-13. Uploads contain line coverage, not rendered content. The
+workflow uses OIDC and does not run as part of rendering.
