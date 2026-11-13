@@ -1,5 +1,8 @@
 # Unreleased
 
+- Explicitly disable capture caching while using the upstream SDK, whose
+  cache hits skip the sequential host pump.
+
 - Advance the desktop scheduler at the video's FPS, with frame zero at zero
   and no accumulated rounding drift. Test native ticker elapsed time in the
   actual raw-frame capture pipeline. Keep the current Fluvie dependency.
