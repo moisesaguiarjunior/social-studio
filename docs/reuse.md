@@ -37,3 +37,9 @@ One line per need: what to use, where it lives, and one consumer. Update in the 
 | Synthetic tagged photo for capture and metadata tests | Checked-in red RGB PNG with synthetic device/location text | `flutter/social_studio/test/fixtures/tagged_red.png` | Frozen-job CLI and capture HTTP regressions |
 | Own desktop render commands and handled cancellation | `RenderProcesses` with a readiness handshake and POSIX group launcher | `flutter/social_studio/lib/src/render_processes.dart`, `tool/run_process.py` in the package | Desktop CLI preflight/capture/encode/cover |
 | Isolated small-canvas CLI checkout for regression tests | `createDesktopCheckout` | `flutter/social_studio/test/support/desktop_checkout.dart` | Frozen-job and cancellation regressions |
+| Compile a crafted photo Story with structural media discovery | CraftStorySurface implements Fluvie's public CollectibleChildren; uses existing buildStory, photo motion, snapshots and encoder | flutter/social_studio/lib/src/story_craft.dart; spec/desktop-story/v2 | example/craft.json and craft_story_test.dart |
+
+Craft integration search covered buildStory, frozen jobs, caption/time conversion,
+Fluvie scene_tree_walk/CollectibleChildren/FrameBuilder, image pre-resolution and
+the existing CLI encode/review transaction. The material adapter declares its
+constructor child instead of adding a second media collector or animation clock.

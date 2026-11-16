@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+  clipper2:
+    dependency: transitive
+    description:
+      name: clipper2
+      sha256: eddedb18c8ad4beaa35e77e0493c1797ef728d8d594223e684c42f9a4bb2df13
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   clock:
     dependency: transitive
     description:
@@ -123,6 +131,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  handcrafted_flutter:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: f6f72fc8b4db431f8eafd8bf9f7d34dadf4aa858
+      resolved-ref: f6f72fc8b4db431f8eafd8bf9f7d34dadf4aa858
+      url: "https://github.com/moisesaguiarjunior/handcrafted_flutter.git"
+    source: git
+    version: "0.1.0"
   highlight:
     dependency: transitive
     description:
@@ -433,5 +450,5 @@ packages:
     source: hosted
     version: "7.0.1"
 sdks:
-  dart: ">=3.13.0 <4.0.0"
-  flutter: ">=3.47.0"
+  dart: ">=3.13.7 <4.0.0"
+  flutter: ">=3.47.9"

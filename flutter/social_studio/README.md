@@ -171,3 +171,10 @@ the separate fork's frame-cache changes. Those require their own reviewed
 integration. The generated Fluvie CLI harness cannot import this checkout's
 host adapter; its self-contained timing must remain compatible with projects
 using the published SDK.
+
+## Crafted material template
+
+Use `example/craft.json` for `version: 2`, `template: "story-craft-v1"`.
+The [crafted Story guide](../../docs/crafted-story.md) defines its material
+arguments and supported canvas envelope. The CLI commands and output artifacts
+are unchanged. Version 1 rejects the new craft field; it is not silently upgraded.

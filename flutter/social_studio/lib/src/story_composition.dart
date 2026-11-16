@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart' hide Animation, Image;
 import 'package:fluvie/fluvie.dart';
 
 import 'story_job.dart';
+import 'story_craft.dart';
 
 /// Compiles a validated job into the existing Fluvie renderer.
 ///
@@ -26,11 +27,11 @@ Video buildStory(StoryJob job, {required String transcriptPath}) {
         textStyle: TextStyle(
           fontFamily: 'Roboto',
           fontSize: integer(job.template, 'captionFontSize').toDouble(),
-          color: _color(string(job.template, 'captionColor')),
+          color: craftColor(string(job.template, 'captionColor')),
           fontWeight: FontWeight.w500,
         ),
-        background: _color(string(job.template, 'captionBackground')),
-        highlight: _color(string(job.template, 'captionColor')),
+        background: craftColor(string(job.template, 'captionBackground')),
+        highlight: craftColor(string(job.template, 'captionColor')),
       ),
       position: CaptionPosition.custom(
         Alignment(0, alignment.toDouble()),
@@ -44,21 +45,47 @@ Video buildStory(StoryJob job, {required String transcriptPath}) {
             scene.durationMs * integer(job.profile, 'fps') ~/ 1000,
           ),
           background: Background.color(
-            _color(string(job.template, 'background')),
+            craftColor(string(job.template, 'background')),
           ),
           children: [
-            SizedBox(
-              width: integer(job.profile, 'width').toDouble(),
-              height: integer(job.profile, 'height').toDouble(),
-              child: Image.file(scene.imagePath, fit: BoxFit.cover),
-            ).animate([Animation.kenBurns(zoom: zoom.toDouble())]),
+            if (job.craft case final recipe?)
+              _craftedPhoto(job, scene, recipe, zoom.toDouble())
+            else
+              SizedBox(
+                width: integer(job.profile, 'width').toDouble(),
+                height: integer(job.profile, 'height').toDouble(),
+                child: Image.file(scene.imagePath, fit: BoxFit.cover),
+              ).animate([Animation.kenBurns(zoom: zoom.toDouble())]),
           ],
         ),
     ],
   );
 }
 
-Color _color(String hex) {
-  final digits = hex.substring(1);
-  return Color(int.parse(digits.length == 6 ? 'FF$digits' : digits, radix: 16));
+Widget _craftedPhoto(
+  StoryJob job,
+  StoryScene scene,
+  Map<String, Object?> recipe,
+  double zoom,
+) {
+  final width = integer(job.profile, 'width').toDouble();
+  final height = integer(job.profile, 'height').toDouble();
+  final inset = craftInset(recipe, width, height);
+  return CraftStorySurface(
+    recipe: recipe,
+    width: width,
+    height: height,
+    child: Center(
+      child: ClipRect(
+        child: SizedBox(
+          width: width - 2 * inset,
+          height: height - 2 * inset,
+          child: Image.file(
+            scene.imagePath,
+            fit: BoxFit.cover,
+          ).animate([Animation.kenBurns(zoom: zoom)]),
+        ),
+      ),
+    ),
+  );
 }

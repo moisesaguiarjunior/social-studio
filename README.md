@@ -70,6 +70,13 @@ of `image`. Unknown keys and unsupported versions fail validation. The complete
 contract is [story-job.schema.json](spec/desktop-story/story-job.schema.json);
 the runnable fixture is [example/story.json](flutter/social_studio/example/story.json).
 
+## Crafted materials
+
+The optional [crafted Story format](docs/crafted-story.md) accepts explicit
+paper/fabric, grain, cut-edge and stitch arguments. It uses handcrafted_flutter
+for decoration and the existing Fluvie capture/encode pipeline for the video.
+`example/craft.json` uses desktop job version 2; version 1 stays strict.
+
 ## Exported files
 
 | File | Purpose |

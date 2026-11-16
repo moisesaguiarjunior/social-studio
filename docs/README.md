@@ -10,6 +10,7 @@ multi-platform engine is the destination; see the roadmap for unfinished work.
 | I want to… | Read |
 | --- | --- |
 | Render a Story from local photos, audio and captions | [Desktop quick start and CLI reference](../flutter/social_studio/README.md) |
+| Add paper, fabric, cut edges and thread to a Story | [Crafted Story guide](crafted-story.md) and [format decision](decisions/0011-crafted-story-template.md) |
 | Use multiple photos or inspect an export | [Photo sequences](../flutter/social_studio/README.md#render-a-sequence-of-photos) and [review artifacts](../flutter/social_studio/README.md#review-and-use-the-export) |
 | Validate JSON or understand the two input contracts | [Specification guide](../spec/README.md) and [desktop contract decision](decisions/0005-desktop-story-job.md) |
 | Find the next implementation milestone | [Execution roadmap](roadmap.md) |

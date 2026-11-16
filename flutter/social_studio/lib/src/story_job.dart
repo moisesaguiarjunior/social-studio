@@ -49,6 +49,8 @@ final class StoryScene {
 /// supports local files only; authorization belongs to the consuming app.
 final class StoryJob {
   StoryJob._({
+    required this.version,
+    required this.craft,
     required this.scenes,
     required this.audioPath,
     required this.durationMs,
@@ -63,6 +65,12 @@ final class StoryJob {
 
   final Map<String, String> _schemas;
   final Map<String, Digest> _mediaHashes;
+
+  /// Desktop input contract version, retained in frozen capture snapshots.
+  final int version;
+
+  /// Validated immutable material recipe; present only for crafted version 2.
+  final Map<String, Object?>? craft;
 
   /// Ordered photo scenes, including one scene for a single-image job.
   final List<StoryScene> scenes;
@@ -94,10 +102,20 @@ final class StoryJob {
   static StoryJob load(String jobPath, {required String specDirectory}) {
     final data = _object(File(jobPath).readAsStringSync());
     final spec = Directory(specDirectory);
+    final version = integer(data, 'version');
+    if (version != 1 && version != 2) {
+      throw const StoryJobException('Unsupported desktop job version.');
+    }
+    // Preserve the selected version namespace in both checkout and snapshot.
+    final schemaDirectory = version == 2 ? p.join(spec.path, 'v2') : spec.path;
     final schemas = {
       for (final name in ['story-job', 'story-profile', 'story-template'])
-        '$name.schema.json': File(p.join(spec.path, '$name.schema.json'))
-            .readAsStringSync(),
+        '$name.schema.json': File(
+          p.join(
+            name == 'story-profile' ? spec.path : schemaDirectory,
+            '$name.schema.json',
+          ),
+        ).readAsStringSync(),
     };
     void validate(Object value, String name) {
       final source = schemas[name];
@@ -112,10 +130,42 @@ final class StoryJob {
       File(p.join(spec.path, 'story-profile.json')).readAsStringSync(),
     );
     final template = _object(
-      File(p.join(spec.path, 'story-template.json')).readAsStringSync(),
+      File(p.join(schemaDirectory, 'story-template.json')).readAsStringSync(),
     );
     validate(profile, 'story-profile.schema.json');
     validate(template, 'story-template.schema.json');
+    final rawCraft = data['craft'];
+    final Map<String, Object?>? craft;
+    if (version == 2) {
+      if (rawCraft is! Map<String, Object?>) {
+        throw const StoryJobException('Expected material recipe.');
+      }
+      if (integer(profile, 'width') > 2048 ||
+          integer(profile, 'height') > 2048 ||
+          integer(profile, 'width') < 64 ||
+          integer(profile, 'height') < 64 ||
+          integer(profile, 'width') + integer(profile, 'height') > 3072) {
+        throw const StoryJobException(
+          'Crafted canvas must have sides 64..2048 and width + height at most 3072 logical pixels.',
+        );
+      }
+      final shorterSide = integer(profile, 'width') < integer(profile, 'height')
+          ? integer(profile, 'width')
+          : integer(profile, 'height');
+      final frameInset = rawCraft['frameInset'];
+      if (frameInset is! num || !frameInset.isFinite) {
+        throw const StoryJobException('Expected finite frameInset.');
+      }
+      if (string(rawCraft, 'stitch') != 'none' &&
+          frameInset * shorterSide / 2 > 128) {
+        throw const StoryJobException(
+          'Crafted seam inset must not exceed 128 logical pixels; reduce frameInset or the shorter canvas side.',
+        );
+      }
+      craft = Map.unmodifiable(rawCraft);
+    } else {
+      craft = null;
+    }
     final duration = integer(data, 'durationMs');
     final cover = integer(data, 'coverMs');
     final fps = integer(profile, 'fps');
@@ -203,6 +253,8 @@ final class StoryJob {
       signature.closeSync();
     }
     return StoryJob._(
+      version: version,
+      craft: craft,
       scenes: List.unmodifiable(scenes),
       audioPath: audio,
       durationMs: duration,
@@ -245,16 +297,27 @@ final class StoryJob {
     final target = Directory(p.absolute(directory))
       ..createSync(recursive: true);
     final base = target.resolveSymbolicLinksSync();
-    void write(String name, Object value) =>
-        File(p.join(target.path, name)).writeAsStringSync(jsonEncode(value));
+    String versioned(String name) =>
+        version == 2 && !name.startsWith('story-profile')
+        ? p.join('v2', name)
+        : name;
+    void write(String name, Object value) {
+      final file = File(p.join(target.path, name));
+      file.parent.createSync(recursive: true);
+      file.writeAsStringSync(jsonEncode(value));
+    }
+
     for (final schema in _schemas.entries) {
-      File(p.join(target.path, schema.key)).writeAsStringSync(schema.value);
+      final file = File(p.join(target.path, versioned(schema.key)));
+      file.parent.createSync(recursive: true);
+      file.writeAsStringSync(schema.value);
     }
     write('story-profile.json', profile);
-    write('story-template.json', template);
+    write(versioned('story-template.json'), template);
     write('job.json', {
-      'version': 1,
+      'version': version,
       'template': string(template, 'id'),
+      if (craft != null) 'craft': craft,
       'scenes': [
         for (final scene in scenes)
           {
