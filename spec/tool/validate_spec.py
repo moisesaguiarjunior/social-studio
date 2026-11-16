@@ -123,7 +123,9 @@ def _validate(instance, schema, defs, path: str) -> list[str]:
         "additionalProperties",
         "items",
         "minItems",
+        "maxItems",
         "minLength",
+        "maxLength",
         "minimum",
         "maximum",
         "pattern",
@@ -184,6 +186,8 @@ def _validate(instance, schema, defs, path: str) -> list[str]:
     if isinstance(instance, str):
         if "minLength" in schema and len(instance) < schema["minLength"]:
             errors.append(f"{path}: minLength")
+        if "maxLength" in schema and len(instance) > schema["maxLength"]:
+            errors.append(f"{path}: maxLength")
         if "pattern" in schema and re.fullmatch(schema["pattern"], instance) is None:
             errors.append(f"{path}: pattern")
     if isinstance(instance, (int, float)) and not isinstance(instance, bool):
@@ -191,11 +195,14 @@ def _validate(instance, schema, defs, path: str) -> list[str]:
             errors.append(f"{path}: minimum")
         if "maximum" in schema and instance > schema["maximum"]:
             errors.append(f"{path}: maximum")
-    if isinstance(instance, list) and "items" in schema:
+    if isinstance(instance, list):
         if "minItems" in schema and len(instance) < schema["minItems"]:
             errors.append(f"{path}: minItems")
-        for index, item in enumerate(instance):
-            errors.extend(_validate(item, schema["items"], defs, f"{path}[{index}]"))
+        if "maxItems" in schema and len(instance) > schema["maxItems"]:
+            errors.append(f"{path}: maxItems")
+        if "items" in schema:
+            for index, item in enumerate(instance):
+                errors.extend(_validate(item, schema["items"], defs, f"{path}[{index}]"))
     if isinstance(instance, dict):
         properties = schema.get("properties", {})
         if "required" in schema:

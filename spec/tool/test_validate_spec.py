@@ -1138,5 +1138,46 @@ class DesktopStoryConsistencyTests(unittest.TestCase):
             self.profile, {**self.desktop, "id": "instagram-reel"}))
 
 
+class DesktopCraftSchemaTest(unittest.TestCase):
+    def setUp(self):
+        self.schema = load_json(SPEC / "desktop-story/v2/story-job.schema.json")
+        self.job = {"version": 2, "template": "story-craft-v1", "image": "photo.png", "audio": "tone.wav",
+                    "durationMs": 12000, "coverMs": 3000,
+                    "captions": [{"startMs": 1000, "endMs": 5000, "text": "Synthetic caption"}],
+                    "craft": {"material": "linen", "color": "#EEE8DD", "seed": 23,
+                              "grainScale": 1, "grainStrength": .7, "frameInset": .12,
+                              "edge": "cut", "stitch": "chain"}}
+
+    def test_crafted_contract_accepts_only_allowlisted_authoring(self):
+        self.assertEqual(validate_document(self.job, self.schema), [])
+        for key, value in {"material": "remote", "callback": "code", "grainStrength": 1.1,
+                           "grainScale": 0, "seed": -1, "frameInset": .5,
+                           "edge": "unknown", "stitch": "unknown"}.items():
+            changed = copy.deepcopy(self.job)
+            changed["craft"][key] = value
+            self.assertTrue(validate_document(changed, self.schema), key)
+
+    def test_desktop_count_and_unicode_length_limits_are_enforced(self):
+        self.assertEqual(validate_document([1, 2], {"type": "array", "maxItems": 2}), [])
+        self.assertTrue(validate_document([1, 2, 3], {"type": "array", "maxItems": 2}))
+        self.assertEqual(validate_document("🎈a", {"type": "string", "maxLength": 2}), [])
+        self.assertTrue(validate_document("🎈ab", {"type": "string", "maxLength": 2}))
+        changed = copy.deepcopy(self.job)
+        changed["captions"] *= 101
+        self.assertTrue(validate_document(changed, self.schema))
+        changed = copy.deepcopy(self.job)
+        changed["captions"][0]["text"] = "x" * 161
+        self.assertTrue(validate_document(changed, self.schema))
+
+    def test_version_one_remains_strict_and_separate(self):
+        original = load_json(SPEC / "desktop-story/story-job.schema.json")
+        changed = copy.deepcopy(self.job)
+        changed.update(version=1, template="story-photo-v1")
+        self.assertTrue(validate_document(changed, original))
+        changed.pop("craft")
+        self.assertEqual(validate_document(changed, original), [])
+        self.assertTrue(validate_document(changed, self.schema))
+
+
 if __name__ == "__main__":
     unittest.main()

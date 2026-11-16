@@ -82,3 +82,12 @@ see decision 0005 for the desktop scope.
 decision 0003. The platform catalog is authoritative; the schema test suite
 compares the desktop duration projection to its Story share rule. See decision
 0005 for the adapter and migration plan that will converge the two entry formats.
+
+### Crafted desktop jobs
+
+`desktop-story/v2` is version 2 of the desktop job/template, not version 2 of the
+catalog. It adds the explicit craft authoring object and the story-craft-v1
+identity. The version-1 profile and result format remain shared; v1 job/template
+schemas remain unchanged and reject new fields. See decision 0011 and
+[the crafted guide](../docs/crafted-story.md). Canonical recipe constraints live
+in the v2 job schema, not a generated Dart copy.

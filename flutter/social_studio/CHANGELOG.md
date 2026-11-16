@@ -1,5 +1,9 @@
 # Unreleased
 
+- Add the versioned crafted Story template with pinned handcrafted_flutter
+  materials, cut edges and thread, preserving the existing Fluvie capture/encode
+  pipeline and strict version-1 inputs. Freeze material recipes with snapshots.
+
 - Return typed, content-free errors for malformed JSON input.
 - Cover snapshot replay/rebasing, JPEG input, fractional scene review and real signal delivery.
 - Handle desktop SIGINT/SIGTERM by stopping worker groups before cleaning export workspaces.

@@ -181,3 +181,19 @@ Python is an external developer runtime under PSF-2.0, not a GPL dependency or
 an app binary. Its incorporated components retain their own notices in that
 installation. [Python licensing](https://docs.python.org/3/license.html), checked
 2026-11-13. No new Dart package or lockfile version is introduced.
+
+## Crafted desktop template
+
+Added 2026-11-16. The desktop package pins handcrafted_flutter to Git revision
+f6f72fc8b4db431f8eafd8bf9f7d34dadf4aa858. It supplies material tiles, cut shapes,
+contour offsets and thread painting, not media loading or a video clock.
+
+| Dependency | Pin | License | LICENSE SHA-256 |
+| --- | --- | --- | --- |
+| handcrafted_flutter | Git f6f72fc8b4db431f8eafd8bf9f7d34dadf4aa858 | MIT | b02286a63e2a668732ad7125d5cb5692bdff5bea9729283b92a09cd43020a6d9 |
+| clipper2 | 0.0.3, transitive | BSL-1.0 | c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566 |
+
+Both notices were read from the resolved dependency sources. The lock diff adds
+only these packages; existing Fluvie and hosted dependency versions are retained.
+No GPL/AGPL dependency or executable is bundled by this addition. Fluvie remains
+hosted 0.3.1; this change does not silently adopt the maintained fork.
