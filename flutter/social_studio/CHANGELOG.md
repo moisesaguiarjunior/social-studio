@@ -1,5 +1,7 @@
 # Unreleased
 
+- Pin desktop rendering to the maintained Fluvie Git tag `v0.3.1-socialstudio.2`.
+
 - Add the versioned crafted Story template with pinned handcrafted_flutter
   materials, cut edges and thread, preserving the existing Fluvie capture/encode
   pipeline and strict version-1 inputs. Freeze material recipes with snapshots.
@@ -11,11 +13,10 @@
 - Protect the production capture HTTP boundary with a persistent injected-request regression.
 - Block new Dart HTTP connections during desktop capture, including real-async work.
 - Verify synthetic source metadata is absent from encoded video and cover in CLI regression tests.
-- Explicitly disable capture caching while using the upstream SDK, whose
-  cache hits skip the sequential host pump.
+- Keep capture caching disabled so raw frames stay in the job workspace.
 - Advance the desktop scheduler at the video's FPS, with frame zero at zero
   and no accumulated rounding drift. Test native ticker elapsed time in the
-  actual raw-frame capture pipeline. Keep the current Fluvie dependency.
+  actual raw-frame capture pipeline.
 
 # 0.1.0
 

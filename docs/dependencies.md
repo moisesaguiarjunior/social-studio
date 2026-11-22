@@ -195,5 +195,16 @@ contour offsets and thread painting, not media loading or a video clock.
 
 Both notices were read from the resolved dependency sources. The lock diff adds
 only these packages; existing Fluvie and hosted dependency versions are retained.
-No GPL/AGPL dependency or executable is bundled by this addition. Fluvie remains
-hosted 0.3.1; this change does not silently adopt the maintained fork.
+No GPL/AGPL dependency or executable was bundled by the crafted template
+addition. Its original lockfile used hosted Fluvie 0.3.1.
+
+## Desktop Fluvie fork
+
+The desktop package resolves `fluvie` from the maintained Git fork at
+`v0.3.1-socialstudio.2`, commit `e9f1425b8d11e2c7967d76bc47a49b047d0f79e3`.
+The package declares version `0.3.1+socialstudio.2` and retains the MIT
+license, copyright 2026 Simon Auer. The package license SHA-256 is
+`4dc05e9666184e6ae0f796aaba9f7a89a69e8b27d9a7d278474692526cc50e69`.
+The desktop lockfile changes only the Fluvie entry. The earlier probe
+tables describe their published 0.3.1 dependencies.
+[Tagged package source and license](https://github.com/moisesaguiarjunior/fluvie/tree/v0.3.1-socialstudio.2/packages/fluvie)
