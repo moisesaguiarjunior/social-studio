@@ -38,8 +38,7 @@ Future<void> main() async {
       await renderVideo(
         video: video,
         outDir: output,
-        // Upstream 0.3.1 skips pumping cache hits. This host counts every
-        // pump, so keep caching off until the reviewed fork is adopted.
+        // Keep Story capture local to this job's output directory.
         cacheEnabled: false,
         resolver: scope.resolver,
         defaultFontFamily: 'Roboto',

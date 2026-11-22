@@ -7,8 +7,8 @@ Package version: 0.1.0 (unpublished).
 
 A runnable local workflow: a JSON job plus photos, audio and timed text become
 `story.mp4`, `cover.png`, `captions.srt`, `review.html` and `result.json`. This checkout tool uses Fluvie's
-headless capture, with a fixed photo-sequence/motion/caption template; no mobile patch
-or published package is required.
+headless capture from the [maintained Fluvie Git tag](https://github.com/moisesaguiarjunior/fluvie/tree/v0.3.1-socialstudio.2),
+with a fixed photo-sequence/motion/caption template.
 
 ## Run the synthetic example
 
@@ -89,7 +89,7 @@ absolute paths, missing files and other signatures are rejected. A remote font
 path and a remote transcript path are rejected before those files are opened. The validation
 command checks the contract and signatures; full decoding occurs during render.
 Captions are supplied text with start/end milliseconds, ordered without overlap.
-Boundaries use Fluvie 0.3.1's `round((milliseconds / 1000) * fps)` conversion,
+Boundaries use Fluvie's `round((milliseconds / 1000) * fps)` conversion,
 including its floating-point operation order; intervals that collapse to zero frames
 are rejected so accepted captions cannot silently disappear.
 No transcription service is called. The cover selects a frame inside the video.
@@ -162,15 +162,8 @@ accumulate interval-rounding drift. Each render creates its own pump closure.
 The regression captures a native Flutter ticker and reads its exact elapsed
 microseconds from raw pixels; it does not compare platform-dependent fonts.
 
-This is a sequential desktop capture contract, not seek or rewind support.
-Production capture explicitly sets `cacheEnabled: false`: upstream 0.3.1
-skips the pump on a cache hit, which would invalidate the host's counter.
-Keep that setting until the reviewed fork's cache behavior is adopted.
-It works with the existing Fluvie 0.3.1 dependency and does not adopt or pin
-the separate fork's frame-cache changes. Those require their own reviewed
-integration. The generated Fluvie CLI harness cannot import this checkout's
-host adapter; its self-contained timing must remain compatible with projects
-using the published SDK.
+The desktop CLI captures each job sequentially and sets `cacheEnabled: false`.
+This keeps raw frame storage in the job's temporary workspace.
 
 ## Crafted material template
 

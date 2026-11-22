@@ -126,11 +126,12 @@ packages:
   fluvie:
     dependency: "direct main"
     description:
-      name: fluvie
-      sha256: e25813b04df4ce8581216742939f556b0959674bb30f2d1f68122fdeaa2243bf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.1"
+      path: "packages/fluvie"
+      ref: "v0.3.1-socialstudio.2"
+      resolved-ref: e9f1425b8d11e2c7967d76bc47a49b047d0f79e3
+      url: "https://github.com/moisesaguiarjunior/fluvie.git"
+    source: git
+    version: "0.3.1+socialstudio.2"
   handcrafted_flutter:
     dependency: "direct main"
     description:

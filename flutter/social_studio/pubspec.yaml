@@ -13,7 +13,11 @@ dependencies:
     git:
       url: https://github.com/moisesaguiarjunior/handcrafted_flutter.git
       ref: f6f72fc8b4db431f8eafd8bf9f7d34dadf4aa858
-  fluvie: 0.3.1
+  fluvie:
+    git:
+      url: https://github.com/moisesaguiarjunior/fluvie.git
+      ref: v0.3.1-socialstudio.2
+      path: packages/fluvie
   json_schema: 5.2.2
   path: 1.9.1
 dev_dependencies:

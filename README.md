@@ -10,6 +10,8 @@ programmatic social media video generation. Its headless desktop CLI turns local
 WAVE audio and supplied timed captions into an Instagram Story MP4, a cover
 image, SRT subtitles and an offline HTML review page. It compiles versioned JSON
 jobs into Fluvie compositions and uses a local FFmpeg process for encoding.
+The desktop package resolves Fluvie from a reviewed Git tag in the maintained
+fork. [Dependency decision](docs/decisions/0012-fluvie-fork-tag.md)
 
 **Current status:** a checkout-based desktop developer tool, version 0.1.0,
 unpublished on pub.dev. Mobile rendering, actual sharing and additional output

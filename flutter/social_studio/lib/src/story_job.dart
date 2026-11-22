@@ -343,7 +343,7 @@ final class StoryJob {
   ].join('\n');
 }
 
-/// Resolves a caption boundary with Fluvie 0.3.1's exact operation order.
+/// Resolves a caption boundary with Fluvie's exact operation order.
 ///
 /// IEEE-754 half boundaries can differ if multiplication/division are reordered.
 /// Shared by validation and review navigation; SRT retains authored times.
